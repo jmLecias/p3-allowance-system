@@ -2,7 +2,7 @@
 $servername = "localhost";
 $username = "root";
 $password = "";
-$dbname = "allowance-system";
+$dbname = "allowance_system";
 
 //Create Connection
 $conn = new mysqli($servername, $username, $password, $dbname);

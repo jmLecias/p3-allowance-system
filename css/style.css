@@ -2,12 +2,135 @@
     margin: 0px;
     padding: 0px;
     box-sizing: border-box;
-    font-family: 'Segoe UI';
+    font-family: 'Roboto Flex', sans-serif;
+    letter-spacing: 0.45px;
 }
 
-.logo-div {
+body {
+    background-color: #092536;
+}
+
+button {
+    background-color: #F99B3C;
+    color: #051E2D;
+    font-size: 15px;
+    font-weight: 800;
+    padding: 8px 40px;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+}
+
+button:hover {
+    background-color: #fdac5b;
+}
+
+.header-div {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
     width: 100%;
-    min-height: 100px;  
+    padding-left: 1%;
+    padding-right: 1%;
+    min-height: 60px;
     background-color: #051E2D;
     border-bottom: 1px #054267 solid;
+}
+
+.body-div {
+    width: 80%;
+    margin-left: 10%;
+    margin-right: 10%;
+    min-height: 500px;
+}
+
+.body-top-div {
+    display: flex;
+    width: 100%;
+    margin-bottom: 10px;
+    min-height: 60px;
+    font-size: 25px;
+    align-items: flex-end;
+    border-bottom: 1px #054267 solid;
+}
+
+.list-div {
+    width: 67%;
+    min-height: 400px;
+    float: left;
+}
+
+.list-header-div {
+    display: flex;
+    width: 100%;
+    min-height: 60px;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 10px;
+}
+
+.list-body-div {
+    width: 100%;
+}
+
+.listtile-div {
+    justify-content: space-between;
+    width: 100%;
+    min-height: 55px;
+    background-color: #124361;
+    margin-bottom: 5px;
+    border-radius: 10px;
+}
+
+.expenses-count-div {
+    margin-bottom: 5px;
+    border-radius: 3px;
+    border: 1px solid #B5E3FF;
+    color: #B5E3FF;
+    padding: 2px 5px;
+    font-size: 10px;  
+    margin-left: 20px
+}
+
+.row-div {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+
+.info-div {
+    width: 30%;
+    min-height: 400px;
+    float: right;
+}
+
+.logo-text {
+    color: #F99B3C;
+    margin-left: 5px;
+    font-size: 20px;
+    font-style: normal;
+    font-weight: 700;
+}
+
+.primary-text {
+    color: #B5E3FF;
+    font-size: 25px;
+    font-style: normal;
+    font-weight: bold;
+}
+
+.secondary-text {
+    color: #B5E3FF;
+    font-size: 18px;
+    font-style: normal;
+    font-weight: 400;
+}
+
+.italic-text {
+    color: #B5E3FF;
+    font-size: 14px;
+    font-weight: normal;
+    font-style: italic;
+    margin-top: 10px
 }
