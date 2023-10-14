@@ -25,7 +25,7 @@ class Allowance
 function displayAllowance($allowance, $expensesCount, $selected)
 {
     $html = "
-        <div class=\"row-div listtile-div\">
+        <div class=\"row-div listtile-div\" style=\"cursor: pointer\">
             <div class=\"row-div\" 
             style=\"width: 50%; justify-content: start\">
                 <h1 class=\"secondary-text\"

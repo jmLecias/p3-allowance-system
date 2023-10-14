@@ -45,7 +45,7 @@ include 'user-allowance-listtile.php'
                 <?php
                 $allowances_sample = array(
                     new Allowance(1, 2, 150.00, "Food allowance", "This is only for food", "nd", "per day"),
-                    new Allowance(1, 2, 150.55, "Food allowance", "This is only for food", "nd", "per day"),
+                    new Allowance(1, 2, 5000.55, "House rent allowance", "This is only for food", "nd", "per month"),
                     new Allowance(1, 2, 150.00, "Food allowance", "This is only for food", "nd", "per day"),
                     new Allowance(1, 2, 150.00, "Food allowance", "This is only for food", "nd", "per day"),
                     new Allowance(1, 2, 1500.45, "Food allowance", "This is only for food", "nd", "per day"),
@@ -58,7 +58,7 @@ include 'user-allowance-listtile.php'
                 ?>
             </div>
         </div>
-        <div class="info-div secondary-text" style="margin-top: 10px">
+        <div class="info-div" style="margin-top: 10px">
             <div class="row-div" style="justify-content: space-between">
                 <h1 class="secondary-text" style="margin-right: 10px">Allowance info</h1>
                 <img stye="position: absolute" src="../public/images/icon-settings.png">

@@ -2,7 +2,7 @@
     margin: 0px;
     padding: 0px;
     box-sizing: border-box;
-    font-family: 'Roboto Flex', sans-serif;
+    font-family: 'Poppins', sans-serif;
     letter-spacing: 0.45px;
 }
 
@@ -14,7 +14,7 @@ button {
     background-color: #F99B3C;
     color: #051E2D;
     font-size: 15px;
-    font-weight: 800;
+    font-weight: 600;
     padding: 8px 40px;
     border: none;
     border-radius: 10px;
@@ -68,6 +68,7 @@ button:hover {
     align-items: center;
     justify-content: space-between;
     margin-top: 10px;
+    color: #B5E3FF;
 }
 
 .list-body-div {
@@ -79,16 +80,21 @@ button:hover {
     width: 100%;
     min-height: 55px;
     background-color: #124361;
-    margin-bottom: 5px;
+    margin-bottom: 6px;
+    color: #B5E3FF;
     border-radius: 10px;
+}
+
+.listtile-div:hover {
+    outline: 2px #fdac5b solid;
+    color: #F99B3C;
 }
 
 .expenses-count-div {
     margin-bottom: 5px;
     border-radius: 3px;
-    border: 1px solid #B5E3FF;
-    color: #B5E3FF;
-    padding: 2px 5px;
+    border: 1px solid;
+    padding: 3px 5px;
     font-size: 10px;  
     margin-left: 20px
 }
@@ -103,6 +109,7 @@ button:hover {
     width: 30%;
     min-height: 400px;
     float: right;
+    color: #B5E3FF;
 }
 
 .logo-text {
@@ -121,7 +128,6 @@ button:hover {
 }
 
 .secondary-text {
-    color: #B5E3FF;
     font-size: 18px;
     font-style: normal;
     font-weight: 400;
