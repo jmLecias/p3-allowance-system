@@ -1,0 +1,13 @@
+* {
+    margin: 0px;
+    padding: 0px;
+    box-sizing: border-box;
+    font-family: 'Segoe UI';
+}
+
+.logo-div {
+    width: 100%;
+    min-height: 100px;  
+    background-color: #051E2D;
+    border-bottom: 1px #054267 solid;
+}
