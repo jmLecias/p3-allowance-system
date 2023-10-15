@@ -58,7 +58,10 @@ include 'user-allowance-class.php';
                                 $r['category']
                             );
 
-                            echo displayAllowance($newAllowance, 5, false);
+                            $sql = "SELECT * FROM expenses WHERE `allowanceID` = '$newAllowance->allowanceID'";
+                            $expensesCount = $conn->query($sql)->num_rows;
+
+                            echo displayAllowance($newAllowance, $expensesCount, false);
                         }
                     } else {
                         echo "No Results";
