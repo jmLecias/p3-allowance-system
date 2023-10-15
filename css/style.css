@@ -25,6 +25,10 @@ button:hover {
     background-color: #fdac5b;
 }
 
+.hide {
+    display: none;
+}
+
 .header-div {
     display: flex;
     flex-direction: row;

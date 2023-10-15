@@ -1,6 +1,6 @@
 <?php
 require_once('../db_conn.php');
-include 'user-allowance-listtile.php'
+include 'user-allowance-class.php';
     ?>
 
 <!DOCTYPE html>
@@ -43,18 +43,41 @@ include 'user-allowance-listtile.php'
             </div>
             <div class="list-body-div">
                 <?php
-                $allowances_sample = array(
-                    new Allowance(1, 2, 150.00, "Food allowance", "This is only for food", "nd", "per day"),
-                    new Allowance(1, 2, 5000.55, "House rent allowance", "This is only for food", "nd", "per month"),
-                    new Allowance(1, 2, 150.00, "Food allowance", "This is only for food", "nd", "per day"),
-                    new Allowance(1, 2, 150.00, "Food allowance", "This is only for food", "nd", "per day"),
-                    new Allowance(1, 2, 1500.45, "Food allowance", "This is only for food", "nd", "per day"),
-                    new Allowance(1, 2, 150.00, "Food allowance", "This is only for food", "nd", "per day"),
-                );
+                    $sql = "SELECT * FROM allowances";
+                    $result = $conn->query($sql);
+                    
+                    if ($result->num_rows > 0) {
+                        while ($r = $result->fetch_assoc()) {
+                            $newAllowance = new Allowance(
+                                $r['allowanceID'],
+                                $r['userID'],
+                                $r['amount'],
+                                $r['title'],
+                                $r['description'],
+                                $r['date'],
+                                $r['category']
+                            );
 
-                foreach ($allowances_sample as $allowance) {
-                    echo displayAllowance($allowance, 5, false);
-                }
+                            echo displayAllowance($newAllowance, 5, false);
+                        }
+                    } else {
+                        echo "No Results";
+                    }
+                    $conn->close();
+
+                    // DEDIGN SAMPLES
+                    // $allowances_sample = array(
+                    //     new Allowance(1, 2, 150.00, "Food allowance", "This is only for food", "nd", "per day"),
+                    //     new Allowance(1, 2, 5000.55, "House rent allowance", "This is only for food", "nd", "per month"),
+                    //     new Allowance(1, 2, 150.00, "Food allowance", "This is only for food", "nd", "per day"),
+                    //     new Allowance(1, 2, 150.00, "Food allowance", "This is only for food", "nd", "per day"),
+                    //     new Allowance(1, 2, 1500.45, "Food allowance", "This is only for food", "nd", "per day"),
+                    //     new Allowance(1, 2, 150.00, "Food allowance", "This is only for food", "nd", "per day"),
+                    // );
+
+                    // foreach ($allowances_sample as $allowance) {
+                    //     echo displayAllowance($allowance, 5, false);
+                    // }
                 ?>
             </div>
         </div>
@@ -67,6 +90,8 @@ include 'user-allowance-listtile.php'
             <h1 class="italic-text" style="font-weight: lighter">This allowance is only for monthly rent.</h1>
         </div>
     </div>
+    <script type="text/javascript" language="javascript" src="../js/jquery-3.7.1.min.js"></script>
+    <script type="text/javascript" language="javascript" src="../js/user-allowance.js"></script>
 </body>
 
 </html>
