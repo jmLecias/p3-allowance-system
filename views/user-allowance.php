@@ -14,20 +14,22 @@ include 'user-allowance-class.php';
 </head>
 
 <body>
+    <!-- Header / Logo Div -->
     <div class="header-div">
-        <div onclick="handleClick()" class="row-div" style="cursor: pointer">
+        <div onclick="handleClick()" class="row-div" style="cursor: pointer; padding: 20px">
             <img src="../public/images/ellipse-2.png" style="position: absolute">
             <img src="../public/images/ellipse-1.png" style="margin-left: 15px">
             <h1 class="logo-text">Money minder</h1>
         </div>
         <div class="row-div" style="cursor: pointer">
-            <h1 class="logo-text" style="font-size: 14px; margin-right: 10px">Logout</h1>
             <img stye="position: absolute" src="../public/images/icon-account-logout.png">
         </div>
     </div>
+
+    <!-- Content Area -->
     <div class="body-div">
         <div class="body-top-div primary-text">
-            User
+            Hell0W4rld
         </div>
         <div class="list-div">
             <div class="list-header-div">
@@ -68,7 +70,7 @@ include 'user-allowance-class.php';
                     }
                     $conn->close();
 
-                    // DEDIGN SAMPLES
+                    // DESIGN SAMPLES
                     // $allowances_sample = array(
                     //     new Allowance(1, 2, 150.00, "Food allowance", "This is only for food", "nd", "per day"),
                     //     new Allowance(1, 2, 5000.55, "House rent allowance", "This is only for food", "nd", "per month"),

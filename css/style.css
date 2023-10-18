@@ -1,8 +1,10 @@
+@import '../fonts/visby-round-font.css';
+
 * {
     margin: 0px;
     padding: 0px;
     box-sizing: border-box;
-    font-family: 'Poppins', sans-serif;
+    font-family: 'VisbyRound', sans-serif;
     letter-spacing: 0.45px;
 }
 
@@ -99,7 +101,7 @@ button:hover {
     border-radius: 3px;
     border: 1px solid;
     padding: 3px 5px;
-    font-size: 10px;  
+    font-size: 10px;
     margin-left: 20px
 }
 
@@ -119,9 +121,9 @@ button:hover {
 .logo-text {
     color: #F99B3C;
     margin-left: 5px;
-    font-size: 20px;
+    font-size: 25px;
     font-style: normal;
-    font-weight: 700;
+    font-weight: 900;
 }
 
 .primary-text {
