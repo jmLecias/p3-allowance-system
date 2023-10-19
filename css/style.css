@@ -5,7 +5,7 @@
     padding: 0px;
     box-sizing: border-box;
     font-family: 'VisbyRound', sans-serif;
-    letter-spacing: 0.45px;
+    letter-spacing: 0.7px;
 }
 
 body {
@@ -31,18 +31,6 @@ button:hover {
     display: none;
 }
 
-.header-div {
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-    width: 100%;
-    padding-left: 1%;
-    padding-right: 1%;
-    min-height: 60px;
-    background-color: #051E2D;
-    border-bottom: 1px #054267 solid;
-}
-
 .body-div {
     width: 80%;
     margin-left: 10%;
@@ -60,62 +48,22 @@ button:hover {
     border-bottom: 1px #054267 solid;
 }
 
-.list-div {
-    width: 67%;
-    min-height: 400px;
-    float: left;
-}
-
-.list-header-div {
+.header-div {
     display: flex;
-    width: 100%;
-    min-height: 60px;
     flex-direction: row;
-    align-items: center;
-    justify-content: space-between;
-    margin-top: 10px;
-    color: #B5E3FF;
-}
-
-.list-body-div {
-    width: 100%;
-}
-
-.listtile-div {
     justify-content: space-between;
     width: 100%;
-    min-height: 55px;
-    background-color: #124361;
-    margin-bottom: 6px;
-    color: #B5E3FF;
-    border-radius: 10px;
-}
-
-.listtile-div:hover {
-    outline: 2px #fdac5b solid;
-    color: #F99B3C;
-}
-
-.expenses-count-div {
-    margin-bottom: 5px;
-    border-radius: 3px;
-    border: 1px solid;
-    padding: 3px 5px;
-    font-size: 10px;
-    margin-left: 20px
+    padding-left: 1%;
+    padding-right: 1%;
+    min-height: 60px;
+    background-color: #051E2D;
+    border-bottom: 1px #054267 solid;
 }
 
 .row-div {
     display: flex;
     flex-direction: row;
     align-items: center;
-}
-
-.info-div {
-    width: 30%;
-    min-height: 400px;
-    float: right;
-    color: #B5E3FF;
 }
 
 .logo-text {
@@ -128,15 +76,23 @@ button:hover {
 
 .primary-text {
     color: #B5E3FF;
-    font-size: 25px;
+    font-size: 23px;
     font-style: normal;
-    font-weight: bold;
+    font-weight: medium;
 }
 
 .secondary-text {
-    font-size: 18px;
+    color: #B5E3FF;
+    font-size: 21px;
     font-style: normal;
-    font-weight: 400;
+    font-weight: normal;
+}
+
+.tertiary-text {
+    color: #B5E3FF;
+    font-size: 14px;
+    font-style: normal;
+    font-weight: light;
 }
 
 .italic-text {
