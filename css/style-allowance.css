@@ -1,0 +1,68 @@
+h1, label {
+    color:#f99b3c; 
+    text-align: center;
+}
+h2, label {
+    color:#f99b3c; 
+    text-align: left;
+}
+body {
+    background-color: #092536;
+    ; 
+}
+form {
+    max-width: 400px;
+    margin: 0 auto;
+    padding: 20px;
+    border-radius: 5px;
+    ;
+}
+label {
+    display: block;
+    margin-top: 10px;
+    color: #c3cad2;
+    text-align: left;
+}
+input[type="text"],
+select {
+    width: 100%;
+    padding: 8px;
+    margin: 5px 0;
+    border: 1px solid #124361;
+    border-radius: 3px;
+    border: 1px solid #f99b3c;
+    background-color: #124361;
+    color:#c3cad2;
+    ;
+}
+input[type="number"] {
+    width: 100%;
+    padding: 8px;
+    margin: 5px 0;
+    border: 1px solid #f99b3c;
+    border-radius: 3px;
+    background-color: #124361;
+    color:#c3cad2;
+    ;
+}
+input[type="date"] {
+    width: 100%;
+    padding: 8px;
+    margin: 5px 0;
+    border: 1px solid #f99b3c;
+    border-radius: 3px;
+    background-color: #124361;
+    color:#c3cad2
+}
+input[type="submit"] {
+    background-color: #007BFF;
+    color: white;
+    border: none;
+    border-radius: 3px;
+    padding: 10px 20px;
+    cursor: pointer;
+}
+input[type="submit"]:hover {
+    background-color: #f99b3c;
+    text-align: right;
+}
