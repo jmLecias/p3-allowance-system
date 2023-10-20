@@ -45,19 +45,36 @@ include 'entity-classes.php';
     }
 
     .list-div {
+        overflow-y: auto;
+        scroll-behavior: smooth;
         width: 100%;
+        height: 75vh;
         border-radius: 10px;
         background: #124361;
         color: #B5E3FF;
-        min-height: 400px;
         box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
     }
 
+    .list-div::-webkit-scrollbar {
+        width: 0px;
+    }
+
+    .sticky-div {
+        position: sticky;
+        top: 0;
+        z-index: 1;
+    }
+
     .list-top-div {
+        position: sticky;
+        top: 0;
+        z-index: 1;
         display: flex;
         flex-direction: row;
         align-items: center;
         justify-content: space-between;
+        min-height: 55px;
+        background: #124361;
         padding: 10px 20px;
     }
 
@@ -81,6 +98,7 @@ include 'entity-classes.php';
         left: 0;
         width: 100%;
         height: 100%;
+        z-index: 100;
         background-color: rgba(0, 0, 0, 0.7);
     }
 
@@ -117,11 +135,13 @@ include 'entity-classes.php';
             Admin interface
         </div>
         <div class="list-div">
-            <div class="list-top-div">
-                <h1 class="secondary-text">User list</h1>
-                <div class="filter-div">
-                    <h1 class="secondary-text" style="margin: 0px 15px; font-size: 15px">ROLE</h1>
-                    <img stye="margin-right: 15px" src="../public/images/icon-arrow-down.png">
+            <div class="sticky-div">
+                <div class="list-top-div">
+                    <h1 class="secondary-text">User list</h1>
+                    <div class="filter-div">
+                        <h1 class="secondary-text" style="margin: 0px 15px; font-size: 15px">ROLE</h1>
+                        <img stye="margin-right: 15px" src="../public/images/icon-arrow-down.png">
+                    </div>
                 </div>
             </div>
             <?php
@@ -130,7 +150,7 @@ include 'entity-classes.php';
 
             echo '
                 <table>
-                    <tr>
+                    <tr class="sticky-div" style="top:55px">
                         <th class="id-sort">ID</th>
                         <th class="name-sort">NAME</th>
                         <th class="email-sort">EMAIL</th>
