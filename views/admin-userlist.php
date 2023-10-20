@@ -73,6 +73,29 @@ include 'entity-classes.php';
         padding-right: 15px;
         cursor: pointer;
     }
+
+    .overlay {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.7);
+    }
+
+    .role-form {
+        background-color: #124361;
+        min-height: 600px;
+        min-width: 500px;
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        margin-top: -300px;
+        margin-left: -250px;
+        padding: 20px;
+        border-radius: 10px;
+    }
 </style>
 
 <body>
@@ -128,15 +151,15 @@ include 'entity-classes.php';
                     // UserList Table Row Div
                     echo '
                         <tr>
-                            <td style="padding-right:50px">'. $newUser->userID . '</td>
+                            <td style="padding-right:50px">' . $newUser->userID . '</td>
                             <td style="padding-right:100px">
-                                <a href="user-allowance.php?id='.$newUser->userID.'">' 
-                                    . $newUser->firstname . ' ' . $newUser->lastname .'
+                                <a href="user-allowance.php?id=' . $newUser->userID . '">'
+                        . $newUser->firstname . ' ' . $newUser->lastname . '
                                 </a>
                             </td>
                             <td>' . $newUser->email . ' </td>
                             <td>
-                                <div class="row-div" style="justify-content: space-between">
+                                <div class="row-div setrole-click" style="justify-content: space-between">
                                     <div>' . $newUser->role . '</div>
                                     <img stye="" src="../public/images/icon-edit.png">
                                 </div>
@@ -153,7 +176,18 @@ include 'entity-classes.php';
         </div>
     </div>
     <script type="text/javascript" language="javascript" src="../js/jquery-3.7.1.min.js"></script>
-    <script type="text/javascript" language="javascript" src="../js/user-allowance.js"></script>
+    <script type="text/javascript" language="javascript" src="../js/admin-userlist.js"></script>
 </body>
+<div class="outside-click overlay">
+    <div class="inside-click" style="display:flex">
+        <form class="role-form">
+            <label class="secondary-text" style="margin: 0px 15px; font-size: 15px" for="user-role">User</label>
+            <input type="radio" id="user-role" name="role" value="user">
+            <label class="secondary-text" style="margin: 0px 15px; font-size: 15px" for="admin-role">Admin</label>
+            <input type="radio" id="admin-role" name="role" value="admin">
+            <button type="submit">Assign Role</button>
+        </form>
+    </div>
+</div>
 
 </html>

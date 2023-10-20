@@ -144,21 +144,21 @@ include 'entity-classes.php';
                         $expensesCount = $conn->query($sql)->num_rows;
 
                         // List Tile Div
-                        echo "
-                            <div class=\"row-div listtile-div hover-trigger\" style=\"cursor: pointer\">
-                                <div class=\"row-div\" style=\"width: 50%; justify-content: start\">
-                                    <h1 class=\"secondary-text\" style=\"font-size: 16px; margin-left: 20px\">$newAllowance->title</h1>
-                                    <div class=\"expenses-count-div\">$expensesCount expenses</div>
+                        echo '
+                            <div class="row-div listtile-div hover-trigger" style="cursor: pointer">
+                                <div class="row-div" style="width: 50%; justify-content: start">
+                                    <h1 class="secondary-text" style="font-size: 16px; margin-left: 20px">'.$newAllowance->title.'</h1>
+                                    <div class="expenses-count-div">'.$expensesCount.' expenses</div>
                                 </div>
-                                <div class=\"row-div\"\ style=\"width: 30%\; justify-content: end\">
-                                    <h1 class=\"secondary-text\" style=\"font-size: 15px;  margin-right: 20px\">PHP $newAllowance->amount</h1>
-                                    <h1 class=\"secondary-text\" style=\"font-size: 12px;  margin-right: 20px\">$newAllowance->category</h1>
-                                    <div class=\"expenses-info\" style=\"display:none;\">
-                                        <button style=\"border-radius: 13px; font-size:12px; padding: 6px 10px; margin-right: 20px\">Expenses info</button>
+                                <div class="row-div" style="width: 40%; justify-content: end">
+                                    <h1 class="secondary-text" style="font-size: 15px;  margin-right: 20px">PHP '.$newAllowance->amount.'</h1>
+                                    <h1 class="secondary-text" style="font-size: 12px;  margin-right: 20px">'.$newAllowance->category.'</h1>
+                                    <div class="expenses-info" style="display:none">
+                                        <button style="border-radius: 13px; font-size:12px; padding: 6px 10px; margin-right: 20px">Expenses info</button>
                                     </div>
                                 </div>
                             </div>
-                        ";
+                        ';
                     }
                 } else {
                     echo "No Results";
