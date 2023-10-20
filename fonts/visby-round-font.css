@@ -1,0 +1,42 @@
+@font-face {
+    font-family: 'VisbyRound';
+    src: url('../fonts/VisbyRoundCF-ExtraLight.woff2') format('woff2');
+    font-weight: 100;
+}
+@font-face {
+    font-family: 'VisbyRound';
+    src: url('../fonts/VisbyRoundCF-Light.woff2') format('woff2');
+    font-weight: light;
+}
+@font-face {
+    font-family: 'VisbyRound';
+    src: url('../fonts/VisbyRoundCF-Regular.woff2') format('woff2');
+    font-weight: normal;
+}
+@font-face {
+    font-family: 'VisbyRound';
+    src: url('../fonts/VisbyRoundCF-Medium.woff2') format('woff2');
+    font-weight: medium;
+}
+@font-face {
+    font-family: 'VisbyRound';
+    src: url('../fonts/VisbyRoundCF-Heavy.woff2') format('woff2');
+    font-weight: 600;
+}
+@font-face {
+    font-family: 'VisbyRound';
+    src: url('../fonts/VisbyRoundCF-DemiBold.woff2') format('woff2');
+    font-weight: 700;
+}
+@font-face {
+    font-family: 'VisbyRound';
+    src: url('../fonts/VisbyRoundCF-Bold.woff2') format('woff2');
+    font-weight: bold;
+}
+@font-face {
+    font-family: 'VisbyRound';
+    src: url('../fonts/VisbyRoundCF-ExtraBold.woff2') format('woff2');
+    font-weight: 900;
+}
+
+

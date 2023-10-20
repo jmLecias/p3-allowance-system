@@ -1,13 +1,104 @@
+@import '../fonts/visby-round-font.css';
+
 * {
     margin: 0px;
     padding: 0px;
     box-sizing: border-box;
-    font-family: 'Segoe UI';
+    font-family: 'VisbyRound', sans-serif;
+    letter-spacing: 0.7px;
 }
 
-.logo-div {
+body {
+    background-color: #092536;
+}
+
+button {
+    background-color: #F99B3C;
+    color: #051E2D;
+    font-size: 15px;
+    font-weight: 600;
+    padding: 8px 40px;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+}
+
+button:hover {
+    background-color: #fdac5b;
+}
+
+.hide {
+    display: none;
+}
+
+.body-div {
+    width: 80%;
+    margin-left: 10%;
+    margin-right: 10%;
+    min-height: 500px;
+}
+
+.body-top-div {
+    display: flex;
     width: 100%;
-    min-height: 100px;  
+    margin-bottom: 10px;
+    min-height: 60px;
+    font-size: 25px;
+    align-items: flex-end;
+    border-bottom: 1px #054267 solid;
+}
+
+.header-div {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    width: 100%;
+    padding-left: 1%;
+    padding-right: 1%;
+    min-height: 60px;
     background-color: #051E2D;
     border-bottom: 1px #054267 solid;
+}
+
+.row-div {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+
+.logo-text {
+    color: #F99B3C;
+    margin-left: 5px;
+    font-size: 25px;
+    font-style: normal;
+    font-weight: 900;
+}
+
+.primary-text {
+    color: #B5E3FF;
+    font-size: 23px;
+    font-style: normal;
+    font-weight: medium;
+}
+
+.secondary-text {
+    color: #B5E3FF;
+    font-size: 21px;
+    font-style: normal;
+    font-weight: normal;
+}
+
+.tertiary-text {
+    color: #B5E3FF;
+    font-size: 14px;
+    font-style: normal;
+    font-weight: light;
+}
+
+.italic-text {
+    color: #B5E3FF;
+    font-size: 14px;
+    font-weight: normal;
+    font-style: italic;
+    margin-top: 10px
 }
