@@ -116,7 +116,7 @@ include 'entity-classes.php';
                     <img stye="position: absolute" src="../public/images/icon-filter.png">
                 </div>
                 <div class="">
-                    <button>
+                    <button onclick="window.location='allowance-addedit.php'">
                         New allowance
                     </button>
                 </div>
