@@ -3,8 +3,8 @@
 <head>
     <title>Create New Allowance Form</title>
 </head>
-<link rel="stylesheet" type="text/css" href="style.css">
-<script src="categorize.js"></script>
+<link rel="stylesheet" type="text/css" href="style-allowance.css">
+<script src="user-add-allowance.js"></script>
 </head>
 <body>
 </html>
