@@ -3,7 +3,7 @@
 <head>
     <title>Create New Allowance Form</title>
 </head>
-<link rel="stylesheet" type="text/css" href="style-allowance.css">
+<link rel="stylesheet" type="text/css" href="user-add-allowance.css">
 <script src="user-add-allowance.js"></script>
 </head>
 <body>
