@@ -45,6 +45,7 @@ button:hover {
     min-height: 60px;
     font-size: 25px;
     align-items: flex-end;
+    color: #B5E3FF;
     border-bottom: 1px #054267 solid;
 }
 
@@ -75,28 +76,24 @@ button:hover {
 }
 
 .primary-text {
-    color: #B5E3FF;
     font-size: 23px;
     font-style: normal;
     font-weight: medium;
 }
 
 .secondary-text {
-    color: #B5E3FF;
     font-size: 21px;
     font-style: normal;
     font-weight: normal;
 }
 
 .tertiary-text {
-    color: #B5E3FF;
     font-size: 14px;
     font-style: normal;
     font-weight: light;
 }
 
 .italic-text {
-    color: #B5E3FF;
     font-size: 14px;
     font-weight: normal;
     font-style: italic;
