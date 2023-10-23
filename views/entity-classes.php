@@ -1,4 +1,24 @@
 <?php
+class Expense
+{
+    public $expenseID;
+    public $allowanceID;
+    public $amount;
+    public $name;
+    public $remarks;
+    public $date;
+
+    public function __construct($expenseID, $allowanceID, $amount, $name, $remarks, $date)
+    {
+        $this->expenseID = $expenseID;
+        $this->allowanceID = $allowanceID;
+        $this->amount = $amount;
+        $this->name = $name;
+        $this->remarks = $remarks;
+        $this->date = $date;
+    }
+}
+
 class Allowance
 {
     public $allowanceID;
