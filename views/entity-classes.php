@@ -24,7 +24,7 @@ class Allowance
     public $allowanceID;
     public $userID;
     public $amount;
-    public $title;
+    public $name;
     public $description;
     public $date;
     public $category;
@@ -34,7 +34,7 @@ class Allowance
         $this->allowanceID = $allowanceID;
         $this->userID = $userID;
         $this->amount = $amount;
-        $this->title = $title;
+        $this->name = $title;
         $this->description = $description;
         $this->date = $date;
         $this->category = $category;

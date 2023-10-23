@@ -132,7 +132,7 @@ include 'entity-classes.php';
                             $r['allowanceID'],
                             $r['userID'],
                             $r['amount'],
-                            $r['title'],
+                            $r['name'],
                             $r['description'],
                             $r['date'],
                             $r['category']
@@ -145,7 +145,7 @@ include 'entity-classes.php';
                         echo '
                         <div class="row-div listtile-div hover-trigger" style="cursor: pointer">
                             <div class="row-div" style="width: 50%; justify-content: start">
-                                <h1 class="secondary-text" style="font-size: 16px; margin-left: 20px">'.$newAllowance->title.'</h1>
+                                <h1 class="secondary-text" style="font-size: 16px; margin-left: 20px">'.$newAllowance->name.'</h1>
                                 <div class="expenses-count-div">'.$expensesCount.' expenses</div>
                             </div>
                             <div class="row-div" style="width: 40%; justify-content: end">
@@ -172,7 +172,7 @@ include 'entity-classes.php';
                 <h1 class="secondary-text" style="margin-right: 10px">Allowance info</h1>
                 <img stye="position: absolute" src="../public/images/icon-settings.png">
             </div>
-            <h1 class="italic-text" style="margin-top: 30px"> House rent allowance</h1>
+            <h1 class="italic-text" style="margin-top: 30px">$</h1>
             <h1 class="italic-text" style="font-weight: lighter">This allowance is only for monthly rent.</h1>
         </div>
     </div>

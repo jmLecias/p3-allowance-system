@@ -27,6 +27,15 @@ button:hover {
     background-color: #fdac5b;
 }
 
+input, select{
+    background-color: #cfe2ee;
+    padding: 5px 10px;
+    min-height: 35px;
+    width: 100%;
+    border: none;
+    border-radius: 7px;
+}
+
 .hide {
     display: none;
 }

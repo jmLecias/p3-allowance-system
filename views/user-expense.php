@@ -81,7 +81,7 @@ include 'entity-classes.php';
                     $r['allowanceID'],
                     $r['userID'],
                     $r['amount'],
-                    $r['title'],
+                    $r['name'],
                     $r['description'],
                     $r['date'],
                     $r['category'],
@@ -109,7 +109,7 @@ include 'entity-classes.php';
     <!-- Content Area -->
     <div class="body-div">
         <div class="body-top-div primary-text">
-            <?php echo $userName." > ".$currentAllowance->title ?>
+            <?php echo $userName." > ".$currentAllowance->name ?>
         </div>
         <div class="list-div">
             <div class="list-header-div">
