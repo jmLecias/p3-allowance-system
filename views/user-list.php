@@ -165,6 +165,7 @@ include 'entity-classes.php';
                         $r['firstname'],
                         $r['lastname'],
                         $r['email'],
+                        $r['password'],
                         $r['role'],
                     );
 
@@ -173,10 +174,10 @@ include 'entity-classes.php';
                         <tr>
                             <td style="padding-right:50px">' . $newUser->userID . '</td>
                             <td style="padding-right:100px">
-                                <a href="user-allowance.php?id=' . $newUser->userID . '">'
-                        . $newUser->firstname . ' ' . $newUser->lastname . '
+                                <a href="user-allowances.php?id=' . $newUser->userID . '">'
+                                    . $newUser->firstname . ' ' . $newUser->lastname . '
                                 </a>
-                            </td>
+                            </td>   
                             <td>' . $newUser->email . ' </td>
                             <td>
                                 <div class="row-div setrole-click" style="justify-content: space-between">
@@ -196,9 +197,9 @@ include 'entity-classes.php';
         </div>
     </div>
     <script type="text/javascript" language="javascript" src="../js/jquery-3.7.1.min.js"></script>
-    <script type="text/javascript" language="javascript" src="../js/admin-userlist.js"></script>
+    <script type="text/javascript" language="javascript" src="../js/user-list.js"></script>
 </body>
-<div class="outside-click overlay">
+<div class="overlay outside-click">
     <div class="inside-click" style="display:flex">
         <form class="role-form">
             <label class="secondary-text" style="margin: 0px 15px; font-size: 15px" for="user-role">User</label>

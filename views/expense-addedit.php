@@ -1,5 +1,4 @@
 <?php
-session_start();
 require_once('../db_conn.php');
 include 'entity-classes.php';
 ?>
@@ -31,7 +30,7 @@ include 'entity-classes.php';
         min-height: 300px;
         background-color: #124361;
         border-radius: 10px;
-        padding:20px;
+        padding: 20px;
         color: #B5E3FF;
     }
 
@@ -41,16 +40,24 @@ include 'entity-classes.php';
 </style>
 
 <?php
-$userID = "";
-$name = "";
-$role = "";
-if (isset($_SESSION['userID'])) {
-    $userID = $_SESSION['userID'];
-    $name = $_SESSION['name'];
-    $role = $_SESSION['role'];
-}
-if (isset($_GET['allowanceID'])) {
-    $allowanceID = $_GET['allowanceID'];
+if (isset($_GET['id'])) {
+    $allowanceID = $_GET['id'];
+    $sql = "SELECT * FROM allowances WHERE `allowanceID` ='$allowanceID'";
+    $result = $conn->query($sql);
+
+    if ($result->num_rows > 0) {
+        while ($r = $result->fetch_assoc()) {
+            $currentAllowance = new Allowance(
+                $r['allowanceID'],
+                $r['userID'],
+                $r['amount'],
+                $r['name'],
+                $r['description'],
+                $r['date'],
+                $r['category'],
+            );
+        }
+    }
 }
 ?>
 
@@ -70,44 +77,36 @@ if (isset($_GET['allowanceID'])) {
     <!-- Content Area -->
     <div class="body-div">
         <div class="body-top-div primary-text">
-            Add new allowance
+            <?php
+            echo (false) ? "Edit expense item" : "Add new expense item";
+            ?>
         </div>
         <div class="form-div secondary-text" style="font-size: 18px">
-            <form action="allowance-addedit.php" method="POST">
+            <form action="expense-addedit.php" method="POST">
                 <table>
                     <tr>
                         <td class="narrow-td"><label>Name</label></td>
-                        <td><input type="text" name="name" placeholder="Enter allowance name" required></td>
+                        <td><input type="text" name="name" placeholder="Enter expense name" required></td>
                     </tr>
                     <tr>
-                        <td><label>Description</label></td>
-                        <td><input type="text" name="description" placeholder="Enter allowance description" required>
+                        <td><label>Remarks</label></td>
+                        <td><input type="text" name="remarks" placeholder="Enter expense description" required>
                         </td>
                     </tr>
                     <tr>
                         <td><label>Amount</label></td>
-                        <td><input type="number" name="amount" min="0" placeholder="Enter allowance amount" required>
+                        <td><input type="number" name="amount" min="0" placeholder="Enter expense amount" required>
                         </td>
                     </tr>
                     <tr>
-                        <td><label>Category</label></td>
-                        <td>
-                            <select class="category-change" name="category" required>
-                                <option value="per day"> per day</option>
-                                <option value="per week">per week</option>
-                                <option value="per month">per month</option>
-                                <option value="date">specific date</option>
-                            </select>
-                        </td>
-                    </tr>
-                    <tr class="specific-date" style="display:none">
                         <td><label>Date</label></td>
                         <td><input type="date" name="date"></td>
                     </tr>
                     <tr>
                         <td style="border-bottom: none"></td>
                         <td style="border-bottom: none">
-                            <button type="SUBMIT" name="newAllowance" style="width: 100%; margin-top: 20px">Add allowance</button>
+                            <button type="SUBMIT" name="newExpense" style="width: 100%; margin-top: 20px">Add
+                                allowance</button>
                         </td>
                     </tr>
                 </table>
@@ -116,16 +115,14 @@ if (isset($_GET['allowanceID'])) {
         </div>
     </div>
     <?php
-    if (isset($_POST['newAllowance'])) {
-        $name = $_POST['name'];
-        $desc = $_POST['description'];
+    if (isset($_POST['newExpense'])) {
         $amount = $_POST['amount'];
-        $category = $_POST['category'];
-        $formDate = $_POST['date'];
+        $name = $_POST['name'];
+        $remarks = $_POST['remarks'];
         $date = date("M d, Y", strtotime($formDate));
 
-        $sql = "INSERT INTO allowances (`userID`, `amount`, `name`, `description`, `date`, `category`)
-            VALUES ('$userID', '$amount', '$name', '$desc', '$date', '$category')";
+        $sql = "INSERT INTO expenses (`allowanceID`, `amount`, `name`, `remarks`, `date`)
+            VALUES ('2', '$amount', '$name', '$remarks', '$date')";
 
         if ($conn->query($sql) === TRUE) {
             header('location:user-allowances.php');
@@ -137,7 +134,7 @@ if (isset($_GET['allowanceID'])) {
     }
     ?>
     <script type="text/javascript" language="javascript" src="../js/jquery-3.7.1.min.js"></script>
-    <script type="text/javascript" language="javascript" src="../js/allowance-addedit.js"></script>
+    <script type="text/javascript" language="javascript" src="../js/expense-addedit.js"></script>
 </body>
 
 </html>

@@ -47,14 +47,16 @@ class User
     public $firstname;
     public $lastname;
     public $email;
+    public $password;
     public $role;
 
-    public function __construct($userID, $firstname, $lastname, $email, $role)
+    public function __construct($userID, $firstname, $lastname, $email,$password, $role)
     {
         $this->userID = $userID;
         $this->firstname = $firstname;
         $this->lastname = $lastname;
         $this->email = $email;
+        $this->password = $password;
         $this->role = $role;
     }
 }

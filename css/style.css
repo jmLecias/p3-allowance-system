@@ -91,20 +91,13 @@ input, select{
 }
 
 .secondary-text {
-    font-size: 21px;
+    font-size: 18px;
     font-style: normal;
     font-weight: normal;
 }
 
 .tertiary-text {
-    font-size: 14px;
+    font-size: 18px;
     font-style: normal;
-    font-weight: light;
-}
-
-.italic-text {
-    font-size: 14px;
-    font-weight: normal;
-    font-style: italic;
-    margin-top: 10px
+    font-weight: lighter;
 }

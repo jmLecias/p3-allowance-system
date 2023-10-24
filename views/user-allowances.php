@@ -1,4 +1,5 @@
 <?php
+session_start();
 require_once('../db_conn.php');
 include 'entity-classes.php';
 ?>
@@ -51,6 +52,11 @@ include 'entity-classes.php';
         color: #F99B3C;
     }
 
+    .selected {
+        outline: 2px #fdac5b solid;
+        color: #F99B3C;
+    }
+
     .expenses-count-div {
         margin-bottom: 5px;
         border-radius: 3px;
@@ -69,26 +75,14 @@ include 'entity-classes.php';
 </style>
 
 <?php
-    $currentUser;
-    if (isset($_GET['id'])) {
-        $userID = $_GET['id'];
-        $sql = "SELECT * FROM users WHERE `userID` ='$userID'";
-        $result = $conn->query($sql);
-
-        if ($result->num_rows > 0) {
-            while ($r = $result->fetch_assoc()) {
-                $currentUser = new User(
-                    $r['userID'],
-                    $r['firstname'],
-                    $r['lastname'],
-                    $r['email'],
-                    $r['role'],
-                );
-            }
-        }
-    } else {
-        header('location:admin-userlist.php');
-    }
+$userID = "";
+$name = "";
+$role = "";
+if (isset($_SESSION['userID'])) {
+    $userID = $_SESSION['userID'];
+    $name = $_SESSION['name'];
+    $role = $_SESSION['role'];
+}
 ?>
 
 <body>
@@ -107,13 +101,13 @@ include 'entity-classes.php';
     <!-- Content Area -->
     <div class="body-div">
         <div class="body-top-div primary-text">
-            <?php echo $currentUser->firstname.' '.$currentUser->lastname;?>
+            <?php echo $name; ?>
         </div>
         <div class="list-div">
             <div class="list-header-div">
                 <div class="row-div" style="cursor: pointer">
                     <h1 class="secondary-text" style="margin-right: 20px">Allowance list</h1>
-                    <img stye="position: absolute" src="../public/images/icon-filter.png">
+                    <img src="../public/images/icon-filter.png">
                 </div>
                 <div class="">
                     <button onclick="window.location='allowance-addedit.php'">
@@ -121,7 +115,7 @@ include 'entity-classes.php';
                     </button>
                 </div>
             </div>
-            <div class="list-body-div">
+            <div class="list-body-div list-click">
                 <?php
                 $sql = "SELECT * FROM allowances WHERE `userID` ='$userID'";
                 $result = $conn->query($sql);
@@ -141,18 +135,37 @@ include 'entity-classes.php';
                         $sql = "SELECT * FROM expenses WHERE `allowanceID` = '$newAllowance->allowanceID'";
                         $expensesCount = $conn->query($sql)->num_rows;
 
+                        $category = ($newAllowance->category == "date") ? $newAllowance->date : $newAllowance->category;
+                        // $totalExpenses = 0;
+
+                        // $sql = "SELECT * FROM expenses WHERE `allowanceID` = '$newAllowance->allowanceID'";
+                        // $result = $conn->query($sql);
+                        // if ($result->num_rows > 0) {
+                        //     while ($r = $result->fetch_assoc()) {
+                        //         $totalExpenses += intval($r['amount']);
+                        //     }
+                        // }
+
                         // List Tile Div
                         echo '
-                        <div class="row-div listtile-div hover-trigger" style="cursor: pointer">
-                            <div class="row-div" style="width: 50%; justify-content: start">
-                                <h1 class="secondary-text" style="font-size: 16px; margin-left: 20px">'.$newAllowance->name.'</h1>
-                                <div class="expenses-count-div">'.$expensesCount.' expenses</div>
+                        <div 
+                            class="row-div listtile-div tile-click" 
+                            style="cursor: pointer"
+                            data-name="' . $newAllowance->name . '"
+                            data-desc="' . $newAllowance->description . '"
+                            data-amount ="' . $newAllowance->amount . '"
+                            data-category ="' . $category . '"
+                            data-expenses="' . $expensesCount . '"
+                        >
+                            <div class="row-div" style="width: 40%; justify-content: start">
+                                <h1 class="secondary-text" style="font-size: 16px; margin-left: 20px">' . $newAllowance->name . '</h1>
+                                <div class="expenses-count-div">' . $expensesCount . ' expenses</div>
                             </div>
-                            <div class="row-div" style="width: 40%; justify-content: end">
-                                <h1 class="secondary-text" style="font-size: 15px;  margin-right: 20px">PHP '.$newAllowance->amount.'</h1>
-                                <h1 class="secondary-text" style="font-size: 12px;  margin-right: 20px">'.$newAllowance->category.'</h1>
-                                <div class="expenses-info" style="display:none">
-                                    <a href="user-expense.php?username='.$currentUser->firstname." ".$currentUser->lastname.'&id='.$newAllowance->allowanceID.'"> 
+                            <div class="row-div" style="width: 50%; justify-content: end">
+                                <h1 class="secondary-text" style="font-size: 15px;  margin-right: 20px">PHP ' . number_format(intval($newAllowance->amount)) . '</h1>
+                                <h1 class="secondary-text" style="font-size: 12px;  margin-right: 20px">' . $category . '</h1>
+                                <div class="expenses-info hide">
+                                    <a href="user-expenses.php?id=' . $newAllowance->allowanceID . '"> 
                                         <button style="border-radius: 13px; font-size:12px; padding: 6px 10px; margin-right: 20px">Expenses info</button>
                                     </a>    
                                 </div>
@@ -167,17 +180,20 @@ include 'entity-classes.php';
                 ?>
             </div>
         </div>
-        <div class="info-div" style="margin-top: 10px">
+        <div class="info-div hide" style="margin-top: 10px">
             <div class="row-div" style="justify-content: space-between">
-                <h1 class="secondary-text" style="margin-right: 10px">Allowance info</h1>
-                <img stye="position: absolute" src="../public/images/icon-settings.png">
+                <h1 class="secondary-text" style="font-size: 18px; margin-right: 10px">Allowance info</h1>
+                <img  src="../public/images/icon-edit.png" style="cursor: pointer">
             </div>
-            <h1 class="italic-text" style="margin-top: 30px">$</h1>
-            <h1 class="italic-text" style="font-weight: lighter">This allowance is only for monthly rent.</h1>
+            <h1 class="info-name secondary-text" style="margin-top: 25px; font-size: 23px">Allowance name</h1>
+            <h1 class="info-desc tertiary-text" style="font-size: 14px; margin-top: 10px">This is the allowance description.</h1>
+            <h1 class="info-amount-category tertiary-text" style="font-size: 14px; margin-top: 10px;">PHP 5,000 - per day</h1>
+            <h1 class="info-total-expenses tertiary-text" style="font-size: 14px; margin-top: 10px;">PHP 5,000 - total expenses</h1>
+            <h1 class="info-expenses tertiary-text" style="font-size: 14px; margin-top: 10px;">3 - expense items</h1>
         </div>
     </div>
     <script type="text/javascript" language="javascript" src="../js/jquery-3.7.1.min.js"></script>
-    <script type="text/javascript" language="javascript" src="../js/user-allowance.js"></script>
+    <script type="text/javascript" language="javascript" src="../js/user-allowances.js"></script>
 </body>
 
 </html>
