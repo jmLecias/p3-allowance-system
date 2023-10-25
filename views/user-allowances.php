@@ -14,6 +14,7 @@ include 'entity-classes.php';
     <title>Allowance Page</title>
 </head>
 
+<!-- Allowance - List Styles -->
 <style>
     .list-div {
         width: 67%;
@@ -74,6 +75,7 @@ include 'entity-classes.php';
     }
 </style>
 
+<!-- Fetches Session Data about User -->
 <?php
 $userID = "";
 $name = "";
@@ -85,6 +87,7 @@ if (isset($_SESSION['userID'])) {
 }
 ?>
 
+<!-- Body of the page -->
 <body>
     <!-- Header / Logo Div -->
     <div class="header-div">
@@ -100,10 +103,13 @@ if (isset($_SESSION['userID'])) {
 
     <!-- Content Area -->
     <div class="body-div">
+        <!-- Body Top -->
         <div class="body-top-div primary-text">
             <?php echo $name; ?>
         </div>
+        <!-- Allowance List Div-->
         <div class="list-div">
+            <!-- Header -->
             <div class="list-header-div">
                 <div class="row-div" style="cursor: pointer">
                     <h1 class="secondary-text" style="margin-right: 20px">Allowance list</h1>
@@ -115,6 +121,7 @@ if (isset($_SESSION['userID'])) {
                     </button>
                 </div>
             </div>
+            <!-- Display List Tiles -->
             <div class="list-body-div list-click">
                 <?php
                 $sql = "SELECT * FROM allowances WHERE `userID` ='$userID'";
@@ -151,6 +158,7 @@ if (isset($_SESSION['userID'])) {
                         <div 
                             class="row-div listtile-div tile-click" 
                             style="cursor: pointer"
+                            data-id="'.$newAllowance->allowanceID.'"
                             data-name="' . $newAllowance->name . '"
                             data-desc="' . $newAllowance->description . '"
                             data-amount ="' . $newAllowance->amount . '"
@@ -180,16 +188,18 @@ if (isset($_SESSION['userID'])) {
                 ?>
             </div>
         </div>
+        <!-- Allowance Info Div -->
         <div class="info-div hide" style="margin-top: 10px">
             <div class="row-div" style="justify-content: space-between">
                 <h1 class="secondary-text" style="font-size: 18px; margin-right: 10px">Allowance info</h1>
-                <img  src="../public/images/icon-edit.png" style="cursor: pointer">
+                <img class="edit-allowance-btn" data-id="" src="../public/images/icon-edit.png" style="cursor: pointer">
             </div>
             <h1 class="info-name secondary-text" style="margin-top: 25px; font-size: 23px">Allowance name</h1>
             <h1 class="info-desc tertiary-text" style="font-size: 14px; margin-top: 10px">This is the allowance description.</h1>
             <h1 class="info-amount-category tertiary-text" style="font-size: 14px; margin-top: 10px;">PHP 5,000 - per day</h1>
             <h1 class="info-total-expenses tertiary-text" style="font-size: 14px; margin-top: 10px;">PHP 5,000 - total expenses</h1>
             <h1 class="info-expenses tertiary-text" style="font-size: 14px; margin-top: 10px;">3 - expense items</h1>
+            <button style="width: 80%; margin-top:30px; background-color: #f25a2c">Delete</button>
         </div>
     </div>
     <script type="text/javascript" language="javascript" src="../js/jquery-3.7.1.min.js"></script>

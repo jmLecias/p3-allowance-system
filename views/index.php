@@ -13,7 +13,7 @@ if (isset($_POST['loginSubmit'])) {
     $email = $_POST['email'];
     $password = $_POST['password'];
 
-    $sql = $sql = "SELECT * FROM users WHERE `email` ='$email'";
+    $sql = "SELECT * FROM users WHERE `email` ='$email'";
     $result = $conn->query($sql);
 
     if ($result->num_rows > 0) {
@@ -27,6 +27,7 @@ if (isset($_POST['loginSubmit'])) {
             $r['role'],
         );
 
+        // Authentication
         if ($password === $foundUser->password) {
             session_unset();
             $_SESSION['userID'] = $foundUser->userID;
@@ -35,11 +36,11 @@ if (isset($_POST['loginSubmit'])) {
 
             header("Location:user-allowances.php");
         } else {
-            $errorMessage = "Incorrect password";
+            echo '<script>alert("Incorrect password");</script>';
         }
 
     } else {
-        $errorMessage = "Member not found, sign up or re-enter email";
+        echo '<script>alert("Member not found, sign up or re-enter email");</script>';
     }
 
     $conn->close();
@@ -51,14 +52,23 @@ if (isset($_POST['registerSubmit'])) {
     $email = $_POST['email'];
     $password = $_POST['password'];
 
+    $sql = "SELECT * FROM users WHERE `email` ='$email'";
+    $result = $conn->query($sql);
+    $validEmail = ($result->num_rows > 0)? false : true;
+
     $sql = "INSERT INTO users (`firstname`, `lastname`, `email`, `password`, `role`)
         VALUES ('$firstname', '$lastname', '$email', '$password', 'member')";
 
-    if ($conn->query($sql) === TRUE) {
-        session_unset();
-        echo '<script>alert("Member registered successfully");</script>';
+    
+    if($validEmail) {
+        if ($conn->query($sql) === TRUE) {
+            session_unset();
+            echo '<script>alert("Member registered successfully");</script>';
+        } else {
+            echo '<script>alert("Failed to add member");</script>';
+        }
     } else {
-        echo '<script>alert("Failed to add member");</script>';
+        echo '<script>alert("Email already has an account");</script>';
     }
 
     $conn->close();
@@ -72,7 +82,7 @@ if (isset($_POST['registerSubmit'])) {
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="../css/style.css">
-    <title>Sign-in Page</title>
+    <title>Index Page</title>
 </head>
 
 <style>
@@ -144,6 +154,7 @@ if (isset($_POST['registerSubmit'])) {
     <script type="text/javascript" language="javascript" src="../js/jquery-3.7.1.min.js"></script>
     <script type="text/javascript" language="javascript" src="../js/index.js"></script>
 </body>
+<!-- Overlay/Forms Html -->
 <div class="overlay outside-click hide">
     <div class="inside-click overlay-form row-div" style="display:flex">
         <div style="width: 45%">

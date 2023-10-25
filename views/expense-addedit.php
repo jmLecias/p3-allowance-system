@@ -40,8 +40,36 @@ include 'entity-classes.php';
 </style>
 
 <?php
+$currentAllowance = null;
+$currentExpense = null;
+$currentAllowanceID = "";
+$expenseID = "";
 if (isset($_GET['id'])) {
-    $allowanceID = $_GET['id'];
+    $expenseID = $_GET['id'];
+
+    $sql = "SELECT * FROM expenses WHERE `expenseID` ='$expenseID'";
+    $result = $conn->query($sql);
+
+    if ($result->num_rows > 0) {
+        while ($r = $result->fetch_assoc()) {
+            $currentExpense = new Expense(
+                $r['expenseID'],
+                $r['allowanceID'],
+                $r['amount'],
+                $r['name'],
+                $r['remarks'],
+                $r['date'],
+            );
+        }
+        $currentAllowanceID = $currentExpense->allowanceID;
+    }
+}
+if (isset($_GET['allowanceID'])) {
+    $currentAllowanceID = $_GET['allowanceID'];
+}
+
+if ($currentExpense !== null) {
+    $allowanceID = $currentExpense->allowanceID;
     $sql = "SELECT * FROM allowances WHERE `allowanceID` ='$allowanceID'";
     $result = $conn->query($sql);
 
@@ -58,6 +86,68 @@ if (isset($_GET['id'])) {
             );
         }
     }
+}
+
+function fillInput($inputName, $currentExpense)
+{
+    if ($currentExpense !== null) {
+        switch ($inputName) {
+            case "name":
+                echo $currentExpense->name;
+                break;
+            case "remarks":
+                echo $currentExpense->remarks;
+                break;
+            case "amount":
+                echo $currentExpense->amount;
+                break;
+            case "date":
+                echo date('Y-m-d', strtotime($currentExpense->date));
+                break;
+            default:
+        }
+    } else {
+        echo "";
+    }
+}
+?>
+
+<!-- Database code -->
+<?php
+if (isset($_POST['newExpense'])) {
+    $currentExpenseID = $_POST['expenseID'];
+    $currentAllowanceID = $_POST['allowanceID'];
+    $amount = $_POST['amount'];
+    $name = $_POST['name'];
+    $remarks = $_POST['remarks'];
+    $formDate = $_POST['date'];
+    $date = date("M d, Y", strtotime($formDate));
+
+    if (!empty($currentExpenseID)) {
+        $editSql = "UPDATE expenses SET 
+                `name` = '$name', 
+                `remarks` = '$remarks',
+                `amount` = '$amount', 
+                `date` = '$date'
+            WHERE `expenseID` = '$currentExpenseID'";
+
+        if ($conn->query($editSql) === TRUE) {
+            header('location:user-expenses.php?id='.$currentAllowanceID);
+        } else {
+            echo '<script>alert("Error: ' . $editSql . ' ' . $conn->error . '");</script>';
+        }
+    } else {
+        $addSql = "INSERT INTO expenses (`allowanceID`, `amount`, `name`, `remarks`, `date`)
+                VALUES ('$currentAllowanceID', '$amount', '$name', '$remarks', '$date')";
+
+        if ($conn->query($addSql) === TRUE) {
+            header('location:user-expenses.php?id='.$currentAllowanceID);
+        } else {
+            echo '<script>alert("Error: ' . $addSql . ' ' . $conn->error . '");</script>';
+        }
+    }
+
+    $conn->close();
 }
 ?>
 
@@ -77,62 +167,48 @@ if (isset($_GET['id'])) {
     <!-- Content Area -->
     <div class="body-div">
         <div class="body-top-div primary-text">
-            <?php
-            echo (false) ? "Edit expense item" : "Add new expense item";
+            <?php 
+            echo ($currentExpense !== null) ? "Edit expense item" : "Add new expense item";
             ?>
         </div>
         <div class="form-div secondary-text" style="font-size: 18px">
             <form action="expense-addedit.php" method="POST">
+                <input type="text" name="expenseID" value="<?php echo $expenseID;?>" hidden>
+                <input type="text" name="allowanceID" value="<?php echo $currentAllowanceID;?>" hidden>
                 <table>
                     <tr>
                         <td class="narrow-td"><label>Name</label></td>
-                        <td><input type="text" name="name" placeholder="Enter expense name" required></td>
+                        <td><input value="<?php fillInput("name", $currentExpense); ?>" type="text" name="name"
+                                placeholder="Enter expense name" required></td>
                     </tr>
                     <tr>
                         <td><label>Remarks</label></td>
-                        <td><input type="text" name="remarks" placeholder="Enter expense description" required>
+                        <td><input value="<?php fillInput("remarks", $currentExpense); ?>" type="text" name="remarks"
+                                placeholder="Enter expense description" required>
                         </td>
                     </tr>
                     <tr>
                         <td><label>Amount</label></td>
-                        <td><input type="number" name="amount" min="0" placeholder="Enter expense amount" required>
+                        <td><input value="<?php fillInput("amount", $currentExpense); ?>" type="number" name="amount"
+                                min="0" placeholder="Enter expense amount" required>
                         </td>
                     </tr>
                     <tr>
                         <td><label>Date</label></td>
-                        <td><input type="date" name="date"></td>
+                        <td><input value="<?php fillInput("date", $currentExpense); ?>" type="date" name="date"></td>
                     </tr>
                     <tr>
                         <td style="border-bottom: none"></td>
                         <td style="border-bottom: none">
-                            <button type="SUBMIT" name="newExpense" style="width: 100%; margin-top: 20px">Add
-                                allowance</button>
+                            <button type="SUBMIT" name="newExpense" style="width: 100%; margin-top: 20px">
+                                <?php echo ($currentExpense === null) ? "Add allowance" : "Edit allowance"; ?>
+                            </button>
                         </td>
                     </tr>
                 </table>
-
             </form>
         </div>
     </div>
-    <?php
-    if (isset($_POST['newExpense'])) {
-        $amount = $_POST['amount'];
-        $name = $_POST['name'];
-        $remarks = $_POST['remarks'];
-        $date = date("M d, Y", strtotime($formDate));
-
-        $sql = "INSERT INTO expenses (`allowanceID`, `amount`, `name`, `remarks`, `date`)
-            VALUES ('2', '$amount', '$name', '$remarks', '$date')";
-
-        if ($conn->query($sql) === TRUE) {
-            header('location:user-allowances.php');
-        } else {
-            echo "Error: " . $sql . "<br>" . $conn->error;
-        }
-
-        $conn->close();
-    }
-    ?>
     <script type="text/javascript" language="javascript" src="../js/jquery-3.7.1.min.js"></script>
     <script type="text/javascript" language="javascript" src="../js/expense-addedit.js"></script>
 </body>

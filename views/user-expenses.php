@@ -105,6 +105,7 @@ if (isset($_SESSION['userID'])) {
     $name = $_SESSION['name'];
     $role = $_SESSION['role'];
 }
+$currentAllowance = null;
 if (isset($_GET['id'])) {
     $allowanceID = $_GET['id'];
     $sql = "SELECT * FROM allowances WHERE `allowanceID` ='$allowanceID'";
@@ -123,8 +124,6 @@ if (isset($_GET['id'])) {
             );
         }
     }
-} else {
-    header('location:user-allowances.php');
 }
 $category = ($currentAllowance->category == "date") ? $currentAllowance->date : $currentAllowance->category;
 
@@ -190,7 +189,7 @@ if ($result->num_rows > 0) {
                     <img stye="position: absolute" src="../public/images/icon-filter.png">
                 </div>
                 <div class="">
-                    <button onclick="window.location='expense-addedit.php'">
+                    <button onclick="window.location='expense-addedit.php?allowanceID=<?php echo $allowanceID; ?>'">
                         New Expense
                     </button>
                 </div>
@@ -216,6 +215,7 @@ if ($result->num_rows > 0) {
                             <div 
                                 class="row-div listtile-div hover-trigger tile-click" 
                                 style="cursor: pointer"
+                                data-id="'.$newExpense->expenseID.'"
                                 data-name="' . $newExpense->name . '"
                                 data-remarks="' . $newExpense->remarks . '"
                                 data-amount="' . $newExpense->amount . '"
@@ -223,7 +223,7 @@ if ($result->num_rows > 0) {
                             >
                                 <div class="row-div" style="width: 50%; justify-content: start">
                                     <h1 class="secondary-text" style="font-size: 16px; margin-left: 20px">' . $newExpense->name . '</h1>
-                                    <div class="expenses-count-div"> 0 itemss</div>
+                                    <div class="expenses-count-div"> 0 items</div>
                                 </div>
                                 <div class="row-div" style="width: 40%; justify-content: end">
                                     <h1 class="secondary-text" style="font-size: 15px;  margin-right: 20px">PHP ' . number_format(intval($newExpense->amount)) . '</h1>
@@ -242,12 +242,13 @@ if ($result->num_rows > 0) {
         <div class="info-div hide" style="margin-top: 10px">
             <div class="row-div" style="justify-content: space-between">
                 <h1 class="secondary-text" style="font-size: 18px; margin-right: 10px">Expense info</h1>
-                <img src="../public/images/icon-edit.png" style="cursor: pointer">
+                <img class="edit-expense-btn" data-id="" src="../public/images/icon-edit.png" style="cursor: pointer">
             </div>
             <h1 class="info-name secondary-text" style="margin-top: 25px; font-size: 23px">Expense name</h1>
             <h1 class="info-remarks tertiary-text" style="font-size: 14px; margin-top: 10px">This expense was used for house rent</h1>
             <h1 class="info-amount tertiary-text" style="font-size: 14px; margin-top: 10px;">PHP 5,000</h1>
             <h1 class="info-date tertiary-text" style="font-size: 14px; margin-top: 10px;">Dec 18, 2023</h1>
+            <button style="width: 80%; margin-top:30px; background-color: #f25a2c">Delete</button>
         </div>
     </div>
     <script type="text/javascript" language="javascript" src="../js/jquery-3.7.1.min.js"></script>
