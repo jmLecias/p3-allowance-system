@@ -1,4 +1,14 @@
 $(document).ready(function () {
+    $("body").click(function (e) {
+        // hides and unselects all
+        $(".info-div").addClass("hide");
+        $(".tile-click").removeClass("selected");
+        $(".delete-dialog").addClass("hide");
+    });
+    $(".info-div").click(function (e) {
+        e.stopPropagation();
+        $(".delete-dialog").addClass("hide");
+    });
     $(".tile-click").click(function (e) {
         e.stopPropagation();
 
@@ -8,7 +18,8 @@ $(document).ready(function () {
         var amount = parseInt($(this).data('amount'));
         var date = $(this).data('date');
         
-        $(".edit-expense-btn").attr("data-id", expenseID);
+        $(".dialog-btn").attr("data-id", expenseID);
+        $(".edit-pass").attr("value", expenseID);
         $(".info-name").html(name);
         $(".info-remarks").html(remarks);
         $(".info-amount-date").html("PHP " + amount.toLocaleString() + " - " + date);
@@ -20,14 +31,28 @@ $(document).ready(function () {
         $(".info-div").removeClass("hide");
         $(this).addClass("selected");
     });
-    $(".edit-expense-btn").click(function (e) {
+    $(".delete-expense-btn").click(function (e) {
         e.stopPropagation();
-        var expenseID = $(this).data('id');
-        window.location.href = "expense-addedit.php?id="+expenseID;
+        $(".delete-dialog").removeClass("hide");
     });
-    $("body").click(function (e) {
-        // hides and unselects all
-        $(".info-div").addClass("hide");
-        $(".tile-click").removeClass("selected");
+    $(".dialog-btn").click(function (e) {
+        var expenseID = $(this).data('id');
+        var value = $(this).data('val');
+
+        if (value == "yes") {
+            $.ajax({
+                url:"user-expenses.php",
+                method:"POST",
+                data:{expenseID:expenseID, submit_delete: 'YES'},
+                success:function(data) {
+                    $('.expense'+expenseID).remove();
+                    $(".info-div").addClass("hide");
+                    location.reload();
+                },
+                error:function(xhr, status, error) {
+                    alert("Error: " + status + " - " + error);
+                }
+            });
+        }
     });
 });

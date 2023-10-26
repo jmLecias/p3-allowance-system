@@ -1,5 +1,5 @@
 $(document).ready(function () {
-    $(".authenticate-click, .footer-click").click(function (e) {
+    $(".authenticate-click, .footer-click, .getstarted-click").click(function (e) {
         var action = $(this).data("action");
 
         if (action === "login") {
@@ -16,8 +16,11 @@ $(document).ready(function () {
             $(".show-password").attr("style", "top: 61%");
         }
 
-        // toogles overlay only if login or register button was pressed
+        // toggles overlay only if login or register button was pressed
         if ($(e.target).hasClass("authenticate-click")) {
+            $(".overlay").toggle();
+        }
+        if ($(e.target).hasClass("getstarted-click")) {
             $(".overlay").toggle();
         }
     });

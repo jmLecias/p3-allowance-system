@@ -2,9 +2,7 @@
 session_unset();
 session_start();
 require_once('../db_conn.php');
-include 'entity-classes.php';
-
-$errorMessage = "";
+include '../entity-classes.php';
 ?>
 
 <?php
@@ -29,12 +27,15 @@ if (isset($_POST['loginSubmit'])) {
 
         // Authentication
         if ($password === $foundUser->password) {
-            session_unset();
             $_SESSION['userID'] = $foundUser->userID;
             $_SESSION['name'] = $foundUser->firstname . " " . $foundUser->lastname;
             $_SESSION['role'] = $foundUser->role;
 
-            header("Location:user-allowances.php");
+            if ($foundUser->role === "admin") {
+                header("Location:user-list.php");
+            } else {
+                header("Location:user-allowances.php");
+            }
         } else {
             echo '<script>alert("Incorrect password");</script>';
         }
@@ -54,13 +55,13 @@ if (isset($_POST['registerSubmit'])) {
 
     $sql = "SELECT * FROM users WHERE `email` ='$email'";
     $result = $conn->query($sql);
-    $validEmail = ($result->num_rows > 0)? false : true;
+    $validEmail = ($result->num_rows > 0) ? false : true;
 
     $sql = "INSERT INTO users (`firstname`, `lastname`, `email`, `password`, `role`)
         VALUES ('$firstname', '$lastname', '$email', '$password', 'member')";
 
-    
-    if($validEmail) {
+
+    if ($validEmail) {
         if ($conn->query($sql) === TRUE) {
             session_unset();
             echo '<script>alert("Member registered successfully");</script>';
@@ -131,15 +132,75 @@ if (isset($_POST['registerSubmit'])) {
         position: absolute;
         left: 36%;
     }
+
+    .title {
+        color: #f99b3c;
+        font-weight: 900;
+        margin: 0;
+        font-size: 75px;
+    }
+
+    .title1 {
+        color: #B5E3FF;
+        font-weight: 700;
+        margin: 0;
+        font-size: 30px;
+
+    }
+
+    .welcome {
+        color: #B5E3FF;
+        font-weight: 500;
+        font-size: 40px;
+        margin: 0;
+    }
+
+    .pcon {
+        width: 500px;
+        height: 500px;
+        margin-top: 40px;
+        text-align: justify;
+        text-justify: inter-word;
+        color: white;
+    }
+
+    .btn {
+        width: 60px;
+        height: 30px;
+    }
+
+    .body-div {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 20px;
+        width: 90%;
+        margin: 3% 5%;
+    }
+
+    .text-content {
+        text-align: left;
+        max-width: 50%;
+        padding: 20px;
+        color: #B5E3FF;
+    }
+
+    .image {
+        max-width: 50%;
+        border-radius: 10px;
+    }
+
+    .button:hover {
+        border: 1px solid #B5E3FF;
+    }
 </style>
 
 <body>
     <!-- Header / Logo Div -->
     <div class="header-div">
-        <div onclick="handleClick()" class="row-div" style="cursor: pointer; padding: 20px">
-            <img src="../public/images/ellipse-2.png" style="position: absolute">
-            <img src="../public/images/ellipse-1.png" style="margin-left: 15px">
-            <h1 class="logo-text">Money minder</h1>
+        <div class="row-div" style="cursor: pointer; padding: 20px">
+            <img src="../public/images/logo-1.png" style="position:absolute">
+            <h1 class="logo-text" style="margin-left: 80px">Money minder</h1>
         </div>
         <div class="row-div" style="cursor: pointer">
             <button class="authenticate-click" data-action="login">LOGIN</button>
@@ -148,8 +209,23 @@ if (isset($_POST['registerSubmit'])) {
     </div>
 
     <!-- Content Area -->
-    <div class="body-div">
-        <!-- CONTENT -->
+    <div class="body-div row-div">
+        <div class="text-content">
+            <h3 class="welcome">Welcome to</h3>
+            <h1 class="title">Money Minder</h1>
+            <h6 class="title1">Your Ultimate Financial Companion</h6>
+            <br><br>
+            <div class="tertiary-text" style="line-height:1.6;">
+                Money Minder is designed to simplify the complexities of
+                financial management and empower users to take charge of their
+                monetary well-being. With its array of features and user-friendly
+                interface, it's an indispensable tool for individuals and businesses
+                looking to achieve financial stability and reach their financial goals.
+            </div>
+            <br>
+            <button class="getstarted-click"  data-action="register">Get started →</button>
+        </div>
+        <img src="../public/images/index_image.jpg" class="image">
     </div>
     <script type="text/javascript" language="javascript" src="../js/jquery-3.7.1.min.js"></script>
     <script type="text/javascript" language="javascript" src="../js/index.js"></script>
@@ -167,7 +243,8 @@ if (isset($_POST['registerSubmit'])) {
                         style="margin-top: 30px" required>
                     <img src="../public/images/icon-eye.png" class="show-password">
                     <button type="SUBMIT" name="loginSubmit" style="width: 40%;margin: 60px 0px">Log in</button>
-                    <h1 class="tertiary-text" style="font-size: 15px">Create an account? <a class="footer-click" data-action="register">Sign
+                    <h1 class="tertiary-text" style="font-size: 15px">Create an account? <a class="footer-click"
+                            data-action="register">Sign
                             up</a></h1>
                 </div>
             </form>
@@ -182,7 +259,8 @@ if (isset($_POST['registerSubmit'])) {
                         style="margin-top: 20px" required>
                     <img src="../public/images/icon-eye.png" class="show-password">
                     <button type="SUBMIT" name="registerSubmit" style="width: 40%;margin: 40px 0px">Sign up</button>
-                    <h1 class="tertiary-text" style="font-size: 15px">Already have an account? <a class="footer-click" data-action="login">Log
+                    <h1 class="tertiary-text" style="font-size: 15px">Already have an account? <a class="footer-click"
+                            data-action="login">Log
                             in</a></h1>
                 </div>
             </form>

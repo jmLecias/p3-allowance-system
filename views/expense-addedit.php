@@ -1,6 +1,7 @@
 <?php
 require_once('../db_conn.php');
-include 'entity-classes.php';
+include '../entity-classes.php';
+include '../header-actions.php';
 ?>
 
 <!DOCTYPE html>
@@ -37,22 +38,31 @@ include 'entity-classes.php';
     .narrow-td {
         width: 40%;
     }
+
+    .back-button {
+        font-size: 15px;
+        color: #B5E3FF;
+        margin-bottom: 20px;
+    }
 </style>
 
 <?php
-$currentAllowance = null;
-$currentExpense = null;
-$currentAllowanceID = "";
-$expenseID = "";
-if (isset($_GET['id'])) {
-    $expenseID = $_GET['id'];
 
+// If user pressed Edit expense button
+$expenseID = "";
+$remainingAllowance = "";
+$allowanceID = "";
+$editExpense = null;
+if (isset($_GET["edit-expense"])) {
+    $expenseID = $_GET['expenseID'];
+    $remainingAllowance = $_GET['remainingAllowance'];
+
+    // Get expense info on database and store inside the editExpense Object
     $sql = "SELECT * FROM expenses WHERE `expenseID` ='$expenseID'";
     $result = $conn->query($sql);
-
     if ($result->num_rows > 0) {
         while ($r = $result->fetch_assoc()) {
-            $currentExpense = new Expense(
+            $editExpense = new Expense(
                 $r['expenseID'],
                 $r['allowanceID'],
                 $r['amount'],
@@ -60,49 +70,34 @@ if (isset($_GET['id'])) {
                 $r['remarks'],
                 $r['date'],
             );
-        }
-        $currentAllowanceID = $currentExpense->allowanceID;
-    }
-}
-if (isset($_GET['allowanceID'])) {
-    $currentAllowanceID = $_GET['allowanceID'];
-}
-
-if ($currentExpense !== null) {
-    $allowanceID = $currentExpense->allowanceID;
-    $sql = "SELECT * FROM allowances WHERE `allowanceID` ='$allowanceID'";
-    $result = $conn->query($sql);
-
-    if ($result->num_rows > 0) {
-        while ($r = $result->fetch_assoc()) {
-            $currentAllowance = new Allowance(
-                $r['allowanceID'],
-                $r['userID'],
-                $r['amount'],
-                $r['name'],
-                $r['description'],
-                $r['date'],
-                $r['category'],
-            );
+            $allowanceID = $editExpense->allowanceID;
         }
     }
 }
 
-function fillInput($inputName, $currentExpense)
+// If user pressed Add expense button
+if(isset($_POST["add-expense"])) {
+    $allowanceID = $_POST["allowanceID"];
+    $remainingAllowance = $_POST['remainingAllowance'];
+}
+
+// Function for filling form when Editing Allowance
+
+function fillInput($inputName, $expenseObj)
 {
-    if ($currentExpense !== null) {
+    if ($expenseObj !== null) {
         switch ($inputName) {
             case "name":
-                echo $currentExpense->name;
+                echo $expenseObj->name;
                 break;
             case "remarks":
-                echo $currentExpense->remarks;
+                echo $expenseObj->remarks;
                 break;
             case "amount":
-                echo $currentExpense->amount;
+                echo $expenseObj->amount;
                 break;
             case "date":
-                echo date('Y-m-d', strtotime($currentExpense->date));
+                echo date('Y-m-d', strtotime($expenseObj->date));
                 break;
             default:
         }
@@ -112,36 +107,41 @@ function fillInput($inputName, $currentExpense)
 }
 ?>
 
-<!-- Database code -->
+<!-- Database code Add / Edit Expense-->
 <?php
-if (isset($_POST['newExpense'])) {
-    $currentExpenseID = $_POST['expenseID'];
-    $currentAllowanceID = $_POST['allowanceID'];
+if (isset($_POST['submit-expenseForm'])) {
+    // to determine if user is editing or adding
+    $editExpenseID = $_POST['expenseID'];
+    $allowanceID = $_POST['allowanceID'];
+    $remainingAllowance = $_POST['remainingAllowance'];
+
+
+    // form inputs
     $amount = $_POST['amount'];
     $name = $_POST['name'];
     $remarks = $_POST['remarks'];
     $formDate = $_POST['date'];
     $date = date("M d, Y", strtotime($formDate));
 
-    if (!empty($currentExpenseID)) {
+    if (!empty($editExpenseID)) {
         $editSql = "UPDATE expenses SET 
                 `name` = '$name', 
                 `remarks` = '$remarks',
                 `amount` = '$amount', 
                 `date` = '$date'
-            WHERE `expenseID` = '$currentExpenseID'";
+            WHERE `expenseID` = '$editExpenseID'";
 
         if ($conn->query($editSql) === TRUE) {
-            header('location:user-expenses.php?id='.$currentAllowanceID);
+            header('location:user-expenses.php?allowanceID='. $allowanceID);
         } else {
             echo '<script>alert("Error: ' . $editSql . ' ' . $conn->error . '");</script>';
         }
     } else {
         $addSql = "INSERT INTO expenses (`allowanceID`, `amount`, `name`, `remarks`, `date`)
-                VALUES ('$currentAllowanceID', '$amount', '$name', '$remarks', '$date')";
+                VALUES ('$allowanceID', '$amount', '$name', '$remarks', '$date')";
 
         if ($conn->query($addSql) === TRUE) {
-            header('location:user-expenses.php?id='.$currentAllowanceID);
+            header('location:user-expenses.php?allowanceID=' . $allowanceID);
         } else {
             echo '<script>alert("Error: ' . $addSql . ' ' . $conn->error . '");</script>';
         }
@@ -154,54 +154,56 @@ if (isset($_POST['newExpense'])) {
 <body>
     <!-- Header / Logo Div -->
     <div class="header-div">
-        <div onclick="handleClick()" class="row-div" style="cursor: pointer; padding: 20px">
-            <img src="../public/images/ellipse-2.png" style="position: absolute">
-            <img src="../public/images/ellipse-1.png" style="margin-left: 15px">
-            <h1 class="logo-text">Money minder</h1>
-        </div>
-        <div class="row-div" style="cursor: pointer">
-            <img stye="padding-right: 20px" src="../public/images/icon-user.png">
+        <div onclick="<?php goToFirstPage($role) ?>" class="row-div" style="cursor: pointer; padding: 20px">
+            <img src="../public/images/logo-1.png" style="position:absolute">
+            <h1 class="logo-text" style="margin-left: 80px">Money minder</h1>
         </div>
     </div>
 
     <!-- Content Area -->
     <div class="body-div">
         <div class="body-top-div primary-text">
-            <?php 
-            echo ($currentExpense !== null) ? "Edit expense item" : "Add new expense item";
+            <?php
+            echo (isset($_GET["edit-expense"])) ? "Edit expense item" : "Add new expense item";
             ?>
         </div>
+        <a href="user-expenses.php?allowanceID=<?php echo $allowanceID;?>" class="terriary-text back-button">Back</a>
+        <br><br>
         <div class="form-div secondary-text" style="font-size: 18px">
             <form action="expense-addedit.php" method="POST">
-                <input type="text" name="expenseID" value="<?php echo $expenseID;?>" hidden>
-                <input type="text" name="allowanceID" value="<?php echo $currentAllowanceID;?>" hidden>
+                <input type="hidden" name="expenseID" value="<?php echo $expenseID; ?>">
+                <input type="hidden" name="allowanceID" value="<?php echo $allowanceID; ?>">
+                <input type="hidden" name="remainingAllowance" value="<?php echo $remainingAllowance; ?>">
                 <table>
                     <tr>
                         <td class="narrow-td"><label>Name</label></td>
-                        <td><input value="<?php fillInput("name", $currentExpense); ?>" type="text" name="name"
+                        <td><input value="<?php fillInput("name", $editExpense); ?>" type="text" name="name"
                                 placeholder="Enter expense name" required></td>
                     </tr>
                     <tr>
                         <td><label>Remarks</label></td>
-                        <td><input value="<?php fillInput("remarks", $currentExpense); ?>" type="text" name="remarks"
+                        <td><input value="<?php fillInput("remarks", $editExpense); ?>" type="text" name="remarks"
                                 placeholder="Enter expense description" required>
                         </td>
                     </tr>
                     <tr>
                         <td><label>Amount</label></td>
-                        <td><input value="<?php fillInput("amount", $currentExpense); ?>" type="number" name="amount"
-                                min="0" placeholder="Enter expense amount" required>
+                        <td><input value="<?php fillInput("amount", $editExpense); ?>" type="number" name="amount"
+                                min="0"
+                                max="<?php echo (!isset($_GET["edit-expense"])) ? $remainingAllowance : intval($editExpense->amount) + $remainingAllowance; ?>"
+                                placeholder="Remaining allowance: PHP <?php echo number_format($remainingAllowance); ?>"
+                                required>
                         </td>
                     </tr>
                     <tr>
                         <td><label>Date</label></td>
-                        <td><input value="<?php fillInput("date", $currentExpense); ?>" type="date" name="date"></td>
+                        <td><input value="<?php fillInput("date", $editExpense); ?>" type="date" name="date"></td>
                     </tr>
                     <tr>
                         <td style="border-bottom: none"></td>
                         <td style="border-bottom: none">
-                            <button type="SUBMIT" name="newExpense" style="width: 100%; margin-top: 20px">
-                                <?php echo ($currentExpense === null) ? "Add allowance" : "Edit allowance"; ?>
+                            <button type="SUBMIT" name="submit-expenseForm" style="margin-top: 20px; width: 100%">
+                                <?php echo (isset($_GET["edit-expense"])) ? "Edit expense" : "Add expense"; ?>
                             </button>
                         </td>
                     </tr>

@@ -1,7 +1,8 @@
 <?php
 session_start();
 require_once('../db_conn.php');
-include 'entity-classes.php';
+include '../entity-classes.php';
+include '../header-actions.php';
 ?>
 
 <!DOCTYPE html>
@@ -38,28 +39,28 @@ include 'entity-classes.php';
     .narrow-td {
         width: 40%;
     }
+
+    .back-button {
+        font-size: 15px;
+        color: #B5E3FF;
+        margin-bottom: 20px;
+    }
 </style>
 
 <?php
-$userID = "";
-$name = "";
-$role = "";
-if (isset($_SESSION['userID'])) {
-    $userID = $_SESSION['userID'];
-    $name = $_SESSION['name'];
-    $role = $_SESSION['role'];
-}
-$currentAllowance = null;
-$allowanceID = "";
-if (isset($_GET['id'])) {
-    $allowanceID = $_GET['id'];
 
+// If user pressed Edit allowance button
+$allowanceID = "";
+$editAllowance = null;
+if(isset($_GET["edit-allowance"])) {
+    $allowanceID = $_GET['allowanceID'];
+
+    // Get allowance info on database and store inside the editAllowance Object
     $sql = "SELECT * FROM allowances WHERE `allowanceID` ='$allowanceID'";
     $result = $conn->query($sql);
-
     if ($result->num_rows > 0) {
         while ($r = $result->fetch_assoc()) {
-            $currentAllowance = new Allowance(
+            $editAllowance = new Allowance(
                 $r['allowanceID'],
                 $r['userID'],
                 $r['amount'],
@@ -72,10 +73,17 @@ if (isset($_GET['id'])) {
     }
 }
 
-function selectCategory($category, $currentAllowance)
+// If user pressed Add allowance button
+$userID = "";
+if(isset($_POST["add-allowance"])) {
+    $userID = $_POST["userID"];
+}
+
+// Function for selecting category when Editing Allowance
+function selectCategory($category, $allowanceObj)
 {
-    if ($currentAllowance !== null) {
-        if ($currentAllowance->category === $category) {
+    if ($allowanceObj !== null) {
+        if ($allowanceObj->category === $category) {
             echo "selected";
         } else {
             echo "";
@@ -83,21 +91,22 @@ function selectCategory($category, $currentAllowance)
     }
 }
 
-function fillInput($inputName, $currentAllowance)
+// Function for filling form when Editing Allowance
+function fillInput($inputName, $allowanceObj)
 {
-    if ($currentAllowance !== null) {
+    if ($allowanceObj !== null) {
         switch ($inputName) {
             case "name":
-                echo $currentAllowance->name;
+                echo $allowanceObj->name;
                 break;
             case "description":
-                echo $currentAllowance->description;
+                echo $allowanceObj->description;
                 break;
             case "amount":
-                echo $currentAllowance->amount;
+                echo $allowanceObj->amount;
                 break;
             case "date":
-                echo date('Y-m-d', strtotime($currentAllowance->date));
+                echo date('Y-m-d', strtotime($allowanceObj->date));
                 break;
             default:
         }
@@ -105,28 +114,31 @@ function fillInput($inputName, $currentAllowance)
         echo "";
     }
 }
-
 ?>
 
-<!-- Database code -->
+<!-- Database code Add / Edit Allowance-->
 <?php
-if (isset($_POST['newAllowance'])) {
-    $currentAllowanceID = $_POST['allowanceID'];
+if (isset($_POST['submit-allowanceForm'])) {
+    // to determine if user is editing or adding
+    $editAllowanceID = $_POST['allowanceID'];
+    $userID = $_POST['userID'];
+
+    // form inputs
     $name = $_POST['name'];
     $desc = $_POST['description'];
     $amount = $_POST['amount'];
     $category = $_POST['category'];
     $formDate = $_POST['date'];
-    $date = date("Y-m-d", strtotime($formDate));
+    $date = date("M d, Y", strtotime($formDate));
 
-    if (!empty($currentAllowanceID)) {
+    if (!empty($editAllowanceID)) {
         $editSql = "UPDATE allowances SET 
                 `name` = '$name', 
                 `description` = '$desc',
                 `amount` = '$amount', 
                 `category` = '$category', 
                 `date` = '$date'
-            WHERE `allowanceID` = '$currentAllowanceID'";
+            WHERE `allowanceID` = '$editAllowanceID'";
 
         if ($conn->query($editSql) === TRUE) {
             header('location:user-allowances.php');
@@ -151,41 +163,38 @@ if (isset($_POST['newAllowance'])) {
 <body>
     <!-- Header / Logo Div -->
     <div class="header-div">
-        <div onclick="handleClick()" class="row-div" style="cursor: pointer; padding: 20px">
-            <img src="../public/images/ellipse-2.png" style="position: absolute">
-            <img src="../public/images/ellipse-1.png" style="margin-left: 15px">
-            <h1 class="logo-text">Money minder</h1>
-        </div>
-        <div class="row-div" style="cursor: pointer">
-            <img stye="padding-right: 20px" src="../public/images/icon-user.png">
+        <div onclick="<?php goToFirstPage($role) ?>" class="row-div" style="cursor: pointer; padding: 20px">
+            <img src="../public/images/logo-1.png" style="position:absolute">
+            <h1 class="logo-text" style="margin-left: 80px">Money minder</h1>
         </div>
     </div>
 
     <!-- Content Area -->
     <div class="body-div">
         <div class="body-top-div primary-text">
-            <?php
-            echo ($currentAllowance === null) ? "Add new allowance" : "Edit allowance";
-            ?>
+            <?php echo (isset($_GET["edit-allowance"])) ? "Edit allowance" : "Add new allowance"; ?>
         </div>
+        <a href="user-allowances.php" class="terriary-text back-button">Back</a>
+        <br><br>
         <div class="form-div secondary-text" style="font-size: 18px">
             <form action="allowance-addedit.php" method="POST">
-                <input type="text" name="allowanceID" value="<?php echo $allowanceID;?>" hidden>
+                <input type="hidden" name="allowanceID" value="<?php echo $allowanceID; ?>">
+                <input type="hidden" name="userID" value="<?php echo $userID; ?>">
                 <table>
                     <tr>
                         <td class="narrow-td"><label>Name</label></td>
-                        <td><input value="<?php fillInput("name", $currentAllowance); ?>" type="text" name="name"
+                        <td><input value="<?php fillInput("name", $editAllowance); ?>" type="text" name="name"
                                 placeholder="Enter allowance name" required></td>
                     </tr>
                     <tr>
                         <td><label>Description</label></td>
-                        <td><input value="<?php fillInput("description", $currentAllowance); ?>" type="text"
+                        <td><input value="<?php fillInput("description", $editAllowance); ?>" type="text"
                                 name="description" placeholder="Enter allowance description" required>
                         </td>
                     </tr>
                     <tr>
                         <td><label>Amount</label></td>
-                        <td><input value="<?php fillInput("amount", $currentAllowance); ?>" type="number" name="amount"
+                        <td><input value="<?php fillInput("amount", $editAllowance); ?>" type="number" name="amount"
                                 min="0" placeholder="Enter allowance amount" required>
                         </td>
                     </tr>
@@ -193,16 +202,16 @@ if (isset($_POST['newAllowance'])) {
                         <td><label>Category</label></td>
                         <td>
                             <select class="category-change" name="category" required>
-                                <option value="per day" <?php selectCategory("per day", $currentAllowance); ?>>
+                                <option value="per day" <?php selectCategory("per day", $editAllowance); ?>>
                                     per day
                                 </option>
-                                <option value="per week" <?php selectCategory("per week", $currentAllowance); ?>>
+                                <option value="per week" <?php selectCategory("per week", $editAllowance); ?>>
                                     per week
                                 </option>
-                                <option value="per month" <?php selectCategory("per month", $currentAllowance); ?>>
+                                <option value="per month" <?php selectCategory("per month", $editAllowance); ?>>
                                     per month
                                 </option>
-                                <option value="date" <?php selectCategory("date", $currentAllowance); ?>>
+                                <option value="date" <?php selectCategory("date", $editAllowance); ?>>
                                     specific date
                                 </option>
                             </select>
@@ -210,13 +219,13 @@ if (isset($_POST['newAllowance'])) {
                     </tr>
                     <tr class="specific-date" style="display:none">
                         <td><label>Date</label></td>
-                        <td><input value="<?php fillInput("date", $currentAllowance); ?>" type="date" name="date"></td>
+                        <td><input value="<?php fillInput("date", $editAllowance); ?>" type="date" name="date"></td>
                     </tr>
                     <tr>
                         <td style="border-bottom: none"></td>
                         <td style="border-bottom: none">
-                            <button type="SUBMIT" name="newAllowance" style="width: 100%; margin-top: 20px">
-                                <?php echo ($currentAllowance === null) ? "Add allowance" : "Edit allowance"; ?>
+                            <button type="SUBMIT" name="submit-allowanceForm"  style="margin-top: 20px; width: 100%">
+                                <?php echo (isset($_GET["edit-allowance"])) ? "Edit allowance" : "Add allowance"; ?>
                             </button>
                         </td>
                     </tr>

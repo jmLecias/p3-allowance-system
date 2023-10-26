@@ -1,7 +1,8 @@
 <?php
 session_start();
 require_once('../db_conn.php');
-include 'entity-classes.php';
+include '../entity-classes.php';
+include '../header-actions.php';
 ?>
 
 <!DOCTYPE html>
@@ -17,6 +18,7 @@ include 'entity-classes.php';
 <style>
     .list-div {
         width: 67%;
+        margin-bottom: 30px;
         min-height: 400px;
         float: left;
     }
@@ -73,15 +75,17 @@ include 'entity-classes.php';
         color: #B5E3FF;
     }
 
-    .allowance-info-div {
-        color: #B5E3FF;
-        background-color: #124361;
-        width: 100%;
-        min-height: 100px;
-        border-radius: 15px;
-        font-size: 20px;
-        padding: 10px;
-        margin-bottom: 20px;
+    .edit-expense-btn {
+        font-size: 14px;
+        border-radius: 5px;
+        width: 55%;
+        margin-top: 30px;
+        background-color: #de8b39;
+    }
+
+    .delete-dialog {
+        position: absolute;
+        transform: translate(190px, 50px);
     }
 
     table {
@@ -93,47 +97,85 @@ include 'entity-classes.php';
     td {
         padding: 10px 20px;
     }
+
+
+    .allowance-info-div {
+        color: #B5E3FF;
+        background-color: #124361;
+        width: 100%;
+        min-height: 100px;
+        border-radius: 15px;
+        font-size: 20px;
+        padding: 10px;
+        margin-bottom: 20px;
+        box-shadow: 0px 4px 3px 0px rgba(0, 0, 0, 0.25);
+        cursor: pointer;
+    }
 </style>
 
 <?php
+
+// Major variable/information needed
 $userID = "";
 $name = "";
 $role = "";
 $allowanceID = "";
-if (isset($_SESSION['userID'])) {
+
+// Check if admin access or not
+if (isset($_GET['admin-access'])) {
+    $role = "admin";
+    $allowanceID = $_GET['allowanceID'];
+} else {
     $userID = $_SESSION['userID'];
     $name = $_SESSION['name'];
     $role = $_SESSION['role'];
+    $allowanceID = $_GET['allowanceID'];
 }
-$currentAllowance = null;
-if (isset($_GET['id'])) {
-    $allowanceID = $_GET['id'];
-    $sql = "SELECT * FROM allowances WHERE `allowanceID` ='$allowanceID'";
-    $result = $conn->query($sql);
 
-    if ($result->num_rows > 0) {
-        while ($r = $result->fetch_assoc()) {
-            $currentAllowance = new Allowance(
-                $r['allowanceID'],
-                $r['userID'],
-                $r['amount'],
-                $r['name'],
-                $r['description'],
-                $r['date'],
-                $r['category'],
-            );
-        }
+// Getting allowance info and stor inside displayAllowance Object
+$displayAllowance = null;
+$sql = "SELECT * FROM allowances WHERE `allowanceID` ='$allowanceID'";
+$result = $conn->query($sql);
+if ($result->num_rows > 0) {
+    while ($r = $result->fetch_assoc()) {
+        $displayAllowance = new Allowance(
+            $r['allowanceID'],
+            $r['userID'],
+            $r['amount'],
+            $r['name'],
+            $r['description'],
+            $r['date'],
+            $r['category'],
+        );
     }
 }
-$category = ($currentAllowance->category == "date") ? $currentAllowance->date : $currentAllowance->category;
 
-$sql = "SELECT * FROM expenses WHERE `allowanceID` = '$currentAllowance->allowanceID'";
-$result = $conn->query($sql);
+// To display the  actual date if category = date
+$category = ($displayAllowance->category == "date") ? $displayAllowance->date : $displayAllowance->category;
+
+// Getting the sum of all expenses in the current allowance
 $totalExpenses = 0;
-
+$sql = "SELECT * FROM expenses WHERE `allowanceID` = '$allowanceID'";
+$result = $conn->query($sql);
 if ($result->num_rows > 0) {
     while ($r = $result->fetch_assoc()) {
         $totalExpenses += intval($r['amount']);
+    }
+}
+
+// Calculating the remaining allowance
+$remainingAllowance = intval($displayAllowance->amount) - intval($totalExpenses);
+
+// Deleting an allowance item
+if (isset($_POST['submit_delete'])) {
+    $expenseID = $_POST['expenseID'];
+
+    $sql = "DELETE FROM expenses WHERE `expenseID` = '$expenseID'";
+
+    if ($conn->query($sql) === TRUE) {
+        echo "success";
+    } else {
+        echo '<script>alert("Error: ' . $sql . ' ' . $conn->error . '");</script>';
     }
 }
 ?>
@@ -141,13 +183,9 @@ if ($result->num_rows > 0) {
 <body>
     <!-- Header / Logo Div -->
     <div class="header-div">
-        <div onclick="handleClick()" class="row-div" style="cursor: pointer; padding: 20px">
-            <img src="../public/images/ellipse-2.png" style="position: absolute">
-            <img src="../public/images/ellipse-1.png" style="margin-left: 15px">
-            <h1 class="logo-text">Money minder</h1>
-        </div>
-        <div class="row-div" style="cursor: pointer">
-            <img stye="padding-right: 20px" src="../public/images/icon-user.png">
+        <div onclick="<?php goToFirstPage($role) ?>" class="row-div" style="cursor: pointer; padding: 20px">
+            <img src="../public/images/logo-1.png" style="position:absolute">
+            <h1 class="logo-text" style="margin-left: 80px">Money minder</h1>
         </div>
     </div>
 
@@ -156,28 +194,31 @@ if ($result->num_rows > 0) {
         <div class="body-top-div primary-text">
             <?php echo $name ?>
         </div>
-        <div class="allowance-info-div">
+        <!-- Allowance Detailed Info box -->
+        <div class="allowance-info-div" onclick="<?php goToFirstPage($role)?>">
             <table style="font-size: 15px">
                 <tr style="font-weight: bold; font-size: 20px">
-                    <td>
-                        <?php echo $currentAllowance->name; ?>
+                    <td class="text-container">
+                        <?php echo $displayAllowance->name; ?>
                     </td>
                     <td>
-                        <?php echo "PHP " . number_format(intval($currentAllowance->amount)); ?>
+                        <?php echo "PHP " . number_format(intval($displayAllowance->amount)); ?>
                     </td>
                     <td>
-                        <?php echo "PHP " . number_format(intval($totalExpenses)); ?>
+                        <?php echo "PHP " . number_format($totalExpenses); ?>
+                    </td>
+                    <td>
+                        <?php echo "PHP " . number_format($remainingAllowance); ?>
                     </td>
                     <td>
                         <?php echo $category; ?>
                     </td>
                 </tr>
-                <tr>
-                    <td>
-                        <?php echo $currentAllowance->description; ?>
-                    </td>
+                <tr style="font-weight: normal; font-size: 14px">
+                    <td><?php echo $displayAllowance->description; ?></td>
                     <td>Allowance amount</td>
                     <td>Total expenses</td>
+                    <td>Remaining amount</td>
                     <td>Category</td>
                 </tr>
             </table>
@@ -188,10 +229,12 @@ if ($result->num_rows > 0) {
                     <h1 class="secondary-text" style="margin-right: 20px">Expenses list</h1>
                     <img stye="position: absolute" src="../public/images/icon-filter.png">
                 </div>
-                <div class="">
-                    <button onclick="window.location='expense-addedit.php?allowanceID=<?php echo $allowanceID; ?>'">
-                        New Expense
-                    </button>
+                <div>
+                    <form action="expense-addedit.php" method="POST">
+                        <input type="hidden" name="allowanceID" value="<?php echo $allowanceID; ?>">
+                        <input type="hidden" name="remainingAllowance" value="<?php echo $remainingAllowance; ?>">
+                        <button type="SUBMIT" name="add-expense">New Expense</button>
+                    </form>
                 </div>
             </div>
             <div class="list-body-div">
@@ -213,9 +256,9 @@ if ($result->num_rows > 0) {
                         // List Tile Div
                         echo '
                             <div 
-                                class="row-div listtile-div hover-trigger tile-click" 
+                                class="row-div listtile-div hover-trigger tile-click expense' . $newExpense->expenseID . '" 
                                 style="cursor: pointer"
-                                data-id="'.$newExpense->expenseID.'"
+                                data-id="' . $newExpense->expenseID . '"
                                 data-name="' . $newExpense->name . '"
                                 data-remarks="' . $newExpense->remarks . '"
                                 data-amount="' . $newExpense->amount . '"
@@ -223,7 +266,6 @@ if ($result->num_rows > 0) {
                             >
                                 <div class="row-div" style="width: 50%; justify-content: start">
                                     <h1 class="secondary-text" style="font-size: 16px; margin-left: 20px">' . $newExpense->name . '</h1>
-                                    <div class="expenses-count-div"> 0 items</div>
                                 </div>
                                 <div class="row-div" style="width: 40%; justify-content: end">
                                     <h1 class="secondary-text" style="font-size: 15px;  margin-right: 20px">PHP ' . number_format(intval($newExpense->amount)) . '</h1>
@@ -239,16 +281,47 @@ if ($result->num_rows > 0) {
                 ?>
             </div>
         </div>
+        <!-- Expense info div -->
         <div class="info-div hide" style="margin-top: 10px">
+            <!-- Allowance info header and Delete button -->
             <div class="row-div" style="justify-content: space-between">
-                <h1 class="secondary-text" style="font-size: 18px; margin-right: 10px">Expense info</h1>
-                <img class="edit-expense-btn" data-id="" src="../public/images/icon-edit.png" style="cursor: pointer">
+                <h1 class="secondary-text">Expense info</h1>
+                <img class="delete-expense-btn" src="../public/images/icon-trash.png" style="cursor: pointer">
+                <!-- Delete dialog div -->
+                <div class="delete-dialog hide">
+                    <h6 class="tertiary-text">Delete this expense?</h6>
+                    <div class="row-div" style="justify-content: end">
+                        <div class="dialog-btn" data-val="yes">Yes</div>
+                        <div class="dialog-btn" data-val="no">No</div>
+                    </div>
+                </div>
             </div>
-            <h1 class="info-name secondary-text" style="margin-top: 25px; font-size: 23px">Expense name</h1>
-            <h1 class="info-remarks tertiary-text" style="font-size: 14px; margin-top: 10px">This expense was used for house rent</h1>
-            <h1 class="info-amount tertiary-text" style="font-size: 14px; margin-top: 10px;">PHP 5,000</h1>
-            <h1 class="info-date tertiary-text" style="font-size: 14px; margin-top: 10px;">Dec 18, 2023</h1>
-            <button style="width: 80%; margin-top:30px; background-color: #f25a2c">Delete</button>
+
+            <!-- Expense name -->
+            <h6 class="info-name primary-text" style="margin-top: 25px">Expense name</h6>
+            <!-- Expense details -->
+            <div style="color: #447FA4;">
+                <!-- Expense remarks -->
+                <div class="row-div" style="margin-top: 30px">
+                    <img src="../public/images/icon-info-circle.png" style="margin-right: 10px">
+                    <h6 class="info-remarks tertiary-text">This is the allowance description.</h6>
+                </div>
+                <!-- Expense amount -->
+                <div class="row-div" style="margin-top: 10px">
+                    <img src="../public/images/icon-wallet.png" style="margin-right: 12px">
+                    <h6 class="info-amount tertiary-text">PHP 3,000</h6>
+                </div>
+                <!-- Expense date -->
+                <div class="row-div" style="margin-top: 10px;">
+                    <img src="../public/images/icon-calendar.png" style="margin-right: 12px">
+                    <h6 class="info-date tertiary-text">Dec 18, 2023</h6>
+                </div>
+            </div>
+            <form action="expense-addedit.php" method="GET">
+                <input class="edit-pass" type="hidden" name="expenseID">
+                <input type="hidden" name="remainingAllowance" value="<?php echo $remainingAllowance; ?>">
+                <button type="SUBMIT" name="edit-expense" class="edit-expense-btn">Edit expense</button>
+            </form>
         </div>
     </div>
     <script type="text/javascript" language="javascript" src="../js/jquery-3.7.1.min.js"></script>

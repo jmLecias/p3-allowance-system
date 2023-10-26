@@ -1,6 +1,7 @@
 <?php
+session_start();
 require_once('../db_conn.php');
-include 'entity-classes.php';
+include '../entity-classes.php';
 ?>
 
 <!DOCTYPE html>
@@ -116,16 +117,25 @@ include 'entity-classes.php';
     }
 </style>
 
+<?php
+// Check if user wants to log out
+if (isset($_POST['logout_press'])) {
+    session_unset();
+    session_destroy();
+    exit();
+}
+?>
+
 <body>
     <!-- Header / Logo Div -->
     <div class="header-div">
-        <div onclick="handleClick()" class="row-div" style="cursor: pointer; padding: 20px">
-            <img src="../public/images/ellipse-2.png" style="position: absolute">
-            <img src="../public/images/ellipse-1.png" style="margin-left: 15px">
-            <h1 class="logo-text">Money minder</h1>
+        <div onclick="<?php goToFirstPage($role) ?>" class="row-div" style="cursor: pointer; padding: 20px">
+            <img src="../public/images/logo-1.png" style="position:absolute">
+            <h1 class="logo-text" style="margin-left: 80px">Money minder</h1>
         </div>
-        <div class="row-div" style="cursor: pointer">
-            <img stye="padding-right: 20px" src="../public/images/icon-user.png">
+        <div class="row-div logout-press" style="cursor: pointer; color: #B5E3FF;">
+            <h6 class="tertiary-text" style="margin-right: 10px; font-size: 15px; font-weight: bold;">LOGOUT</h6>
+            <img style="margin-right: 20px" src="../public/images/icon-alternate-sign-out.png">
         </div>
     </div>
 
@@ -175,7 +185,7 @@ include 'entity-classes.php';
                             <td style="padding-right:50px">' . $newUser->userID . '</td>
                             <td style="padding-right:100px">
                                 <a href="user-allowances.php?id=' . $newUser->userID . '">'
-                                    . $newUser->firstname . ' ' . $newUser->lastname . '
+                        . $newUser->firstname . ' ' . $newUser->lastname . '
                                 </a>
                             </td>   
                             <td>' . $newUser->email . ' </td>

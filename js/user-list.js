@@ -10,4 +10,17 @@ $(document).ready(function () {
     $(".outside-click").click(function () {
         $(".overlay").toggle();
     });
+    $(".logout-press").click(function () {
+        $.ajax({
+            url:"user-list.php",
+            method:"POST",
+            data:{logout_press:'yes'},
+            success:function(data) {
+                location.replace("index.php");
+            },
+            error:function(xhr, status, error) {
+                alert("Error: " + status + " - " + error);
+            }
+        });
+    });
 });
