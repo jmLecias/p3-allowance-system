@@ -7,4 +7,9 @@ function goToFirstPage($sessionRole)
         echo "window.location='user-allowances.php'";
     }
 }
+
+function isAdmin($role) {
+    echo ($role == "admin")? "hide": "";
+}
+
 ?>

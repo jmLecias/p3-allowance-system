@@ -19,7 +19,7 @@ $(document).ready(function () {
         var amount = parseInt($(this).data('amount'));
         var category = $(this).data('category');
         var expenses = $(this).data('expenses');
-        var tExpenses = $(this).data('tExpenses');
+        var tExpenses = $(this).data('texpenses');
 
         $(".dialog-btn").attr("data-id", allowanceID);
         $(".edit-allowance-pass").attr("value", allowanceID);
@@ -27,8 +27,8 @@ $(document).ready(function () {
         $(".info-desc").html(desc);
         $(".info-amount-category").html("PHP " + amount.toLocaleString() + " _ " + category);
         $(".info-expenses").html(expenses.toLocaleString() + " expense items");
-        // $(".info-total-expenses").html("PHP " + tExpenses.toLocaleString() + " - Total expenses");
-
+        $(".info-total-expenses").html("PHP " + tExpenses.toLocaleString() + " _ total expenses");
+        
         // unselect all first
         $(".tile-click .expenses-info").addClass("hide");
         $(".tile-click").removeClass("selected");

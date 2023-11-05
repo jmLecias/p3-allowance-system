@@ -124,6 +124,7 @@ $role = "";
 // Check if admin access or not
 if (isset($_GET['admin-access'])) {
     $userID = $_GET['userID'];
+    $name = $_GET['admin-access'];
     $role = "admin";
     //get user info in db
 } else {
@@ -131,6 +132,9 @@ if (isset($_GET['admin-access'])) {
     $name = $_SESSION['name'];
     $role = $_SESSION['role'];
 }
+
+// Checks if the current user is Admin
+$adminAccess = ($role == "admin") ? $name : "";
 
 // Check if user wants to log out
 if (isset($_POST['logout_press'])) {
@@ -153,30 +157,44 @@ if (isset($_POST['submit_delete'])) {
 }
 
 // Getting the sum of all allowances of user
-$totalAllowance = 0;
+$totalAllowances = 0;
 $sql = "SELECT * FROM allowances WHERE `userID` ='$userID'";
 $result = $conn->query($sql);
 
 if ($result->num_rows > 0) {
     while ($r = $result->fetch_assoc()) {
-        $totalAllowance += intval($r["amount"]);
+        $totalAllowances += intval($r["amount"]);
     }
 }
 
 // Getting the sum of all expenses of user
 
-// $totalAllowance = 0;
-// $sql = "SELECT * FROM allowances WHERE  `userID` ='$userID'";
-// $result = $conn->query($sql);
+$totalExpenses = 0;
+$sql = "SELECT * FROM allowances WHERE `userID` ='$userID'";
+$result_allowances = $conn->query($sql);
 
-// if ($result->num_rows > 0) {
-//     while ($r = $result->fetch_assoc()) {
-//         $totalAllowance += intval($r["amount"]);
-//     }
-// }
+if ($result_allowances->num_rows > 0) {
+    while ($row_allowances = $result_allowances->fetch_assoc()) {
+        $allowanceID = $row_allowances["allowanceID"];
+
+        $sql = "SELECT * FROM expenses WHERE `allowanceID` = $allowanceID";
+        $result_expenses = $conn->query($sql);
+
+        if ($result_expenses->num_rows > 0) {
+            while ($row_expenses = $result_expenses->fetch_assoc()) {
+                $totalExpenses += intval($row_expenses["amount"]);
+            }
+        }
+    }
+}
+
+// Calculating the remaining allowance
+$remainingAllowance = intval($totalAllowances) - intval($totalExpenses);
+
 ?>
 
 <!-- Body of the page -->
+
 <body>
     <!-- Header / Logo Div -->
     <div class="header-div">
@@ -184,6 +202,7 @@ if ($result->num_rows > 0) {
             <img src="../public/images/logo-1.png" style="position:absolute">
             <h1 class="logo-text" style="margin-left: 80px">Money minder</h1>
         </div>
+        <!-- Logout Button -->
         <div class="row-div logout-press" style="cursor: pointer; color: #B5E3FF;">
             <h6 class="tertiary-text" style="margin-right: 10px; font-size: 15px; font-weight: bold;">LOGOUT</h6>
             <img style="margin-right: 20px" src="../public/images/icon-alternate-sign-out.png">
@@ -200,17 +219,19 @@ if ($result->num_rows > 0) {
                         <?php echo $name; ?>
                     </td>
                     <td>
-                        <?php echo "PHP " . number_format($totalAllowance) ?>
+                        <?php echo "PHP " . number_format($totalAllowances) ?>
                     </td>
                     <td>
-                        <?php echo "PHP ????" ?>
+                        <?php echo "PHP " . number_format($totalExpenses) ?>
                     </td>
                     <td>
-                        <?php echo "PHP ???"; ?>
+                        <?php echo "PHP " . number_format($remainingAllowance) ?>
                     </td>
                 </tr>
                 <tr>
-                    <td><?php echo $role; ?></td>
+                    <td>
+                        <?php echo $role; ?>
+                    </td>
                     <td>Total allowances</td>
                     <td>All expenses</td>
                     <td>Remaining amount</td>
@@ -225,7 +246,7 @@ if ($result->num_rows > 0) {
                     <h1 class="secondary-text" style="margin-right: 20px">Allowance list</h1>
                     <img src="../public/images/icon-filter.png">
                 </div>
-                <div>
+                <div class="<?php isAdmin($role); ?>">
                     <form action="allowance-addedit.php" method="POST">
                         <input type="hidden" name="userID" value="<?php echo $userID; ?>">
                         <button type="SUBMIT" name="add-allowance">New allowance</button>
@@ -250,20 +271,22 @@ if ($result->num_rows > 0) {
                             $r['category']
                         );
 
+                        $totalAllowanceExpenses = 0;
+                        $sql = "SELECT * FROM expenses WHERE `allowanceID` = '$newAllowance->allowanceID'";
+                        $result_expenses = $conn->query($sql);
+                
+                        if ($result_expenses->num_rows > 0) {
+                            while ($row_expenses = $result_expenses->fetch_assoc()) {
+                                $totalAllowanceExpenses += intval($row_expenses["amount"]);
+                            }
+                        }
+
                         $sql = "SELECT * FROM expenses WHERE `allowanceID` = '$newAllowance->allowanceID'";
                         $expensesCount = $conn->query($sql)->num_rows;
 
                         $category = ($newAllowance->category == "date") ? $newAllowance->date : $newAllowance->category;
-                        // $totalExpenses = 0;
-                
-                        // $sql = "SELECT * FROM expenses WHERE `allowanceID` = '$newAllowance->allowanceID'";
-                        // $result = $conn->query($sql);
-                        // if ($result->num_rows > 0) {
-                        //     while ($r = $result->fetch_assoc()) {
-                        //         $totalExpenses += intval($r['amount']);
-                        //     }
-                        // }
-                
+
+
                         // List Tile Div
                         echo '
                         <div
@@ -275,6 +298,7 @@ if ($result->num_rows > 0) {
                             data-amount ="' . $newAllowance->amount . '"
                             data-category ="' . $category . '"
                             data-expenses="' . $expensesCount . '"
+                            data-texpenses="' . $totalAllowanceExpenses . '"
                         >
                             <div class="row-div" style="width: 40%; justify-content: start">
                                 <h1 class="secondary-text text-container" style="font-size: 16px; margin-left: 20px">' . $newAllowance->name . '</h1>
@@ -284,9 +308,11 @@ if ($result->num_rows > 0) {
                                 <h1 class="secondary-text" style="font-size: 15px;  margin-right: 20px">PHP ' . number_format(intval($newAllowance->amount)) . '</h1>
                                 <h1 class="secondary-text" style="font-size: 12px;  margin-right: 20px">' . $category . '</h1>
                                 <div class="expenses-info hide">
-                                    <a href="user-expenses.php?allowanceID='.$newAllowance->allowanceID . '"> 
+                                    <form action="user-expenses.php" method="GET">
+                                        <input type="hidden" name="allowanceID" value="' . $newAllowance->allowanceID . '">
+                                        <input type="hidden" name="admin-access" value="' . $adminAccess . '">
                                         <button style="border-radius: 13px; font-size:12px; padding: 6px 10px; margin-right: 20px">Expenses info</button>
-                                    </a>    
+                                    </form> 
                                 </div>
                             </div>
                         </div>
@@ -304,7 +330,10 @@ if ($result->num_rows > 0) {
             <!-- Allowance info header and Delete button -->
             <div class="row-div" style="justify-content: space-between">
                 <h6 class="secondary-text">Allowance info</h6>
-                <img class="delete-allowance-btn" src="../public/images/icon-trash.png" style="cursor: pointer">
+                <div class="<?php isAdmin($role) ?>">
+                    <img class="delete-allowance-btn   <?php isAdmin($role) ?>" src="../public/images/icon-trash.png"
+                        style="cursor: pointer">
+                </div>
                 <!-- Delete dialog div -->
                 <div class="delete-dialog hide">
                     <h6 class="tertiary-text">Delete this allowance?</h6>
@@ -331,7 +360,7 @@ if ($result->num_rows > 0) {
                 <!-- Allowance total expenses -->
                 <div class="row-div" style="margin-top: 10px;">
                     <img src="../public/images/icon-wallet.png" style="margin-right: 12px">
-                    <h6 class="info-total-expenses tertiary-text">PHP 5,000 _ total expenses</h6>
+                    <h6 class="info-total-expenses tertiary-text">PHP ??? _ total expenses</h6>
                 </div>
                 <!-- Allowance expenses count -->
                 <div class="row-div" style="margin-top: 10px;">
@@ -339,10 +368,12 @@ if ($result->num_rows > 0) {
                     <h6 class="info-expenses tertiary-text">3 _ expense items</h6>
                 </div>
             </div>
-            <form action="allowance-addedit.php" method="GET">
-                <input class="edit-allowance-pass" type="hidden" name="allowanceID" value="">
-                <button class="edit-allowance-btn" type="SUBMIT" name="edit-allowance">Edit allowance</button>
-            </form>
+            <div class="<?php isAdmin($role) ?>">
+                <form action="allowance-addedit.php" method="GET">
+                    <input class="edit-allowance-pass" type="hidden" name="allowanceID" value="">
+                    <button class="edit-allowance-btn" type="SUBMIT" name="edit-allowance">Edit allowance</button>
+                </form>
+            </div>
         </div>
     </div>
     <script type="text/javascript" language="javascript" src="../js/jquery-3.7.1.min.js"></script>

@@ -116,17 +116,16 @@ include '../header-actions.php';
 <?php
 
 // Major variable/information needed
-$userID = "";
 $name = "";
 $role = "";
 $allowanceID = "";
 
 // Check if admin access or not
-if (isset($_GET['admin-access'])) {
+if (isset($_GET['admin-access']) && $_GET['admin-access'] != "") {
+    $name = $_GET['admin-access'];
     $role = "admin";
     $allowanceID = $_GET['allowanceID'];
 } else {
-    $userID = $_SESSION['userID'];
     $name = $_SESSION['name'];
     $role = $_SESSION['role'];
     $allowanceID = $_GET['allowanceID'];
@@ -229,7 +228,7 @@ if (isset($_POST['submit_delete'])) {
                     <h1 class="secondary-text" style="margin-right: 20px">Expenses list</h1>
                     <img stye="position: absolute" src="../public/images/icon-filter.png">
                 </div>
-                <div>
+                <div class="<?php isAdmin($role)?>">
                     <form action="expense-addedit.php" method="POST">
                         <input type="hidden" name="allowanceID" value="<?php echo $allowanceID; ?>">
                         <input type="hidden" name="remainingAllowance" value="<?php echo $remainingAllowance; ?>">
@@ -286,7 +285,9 @@ if (isset($_POST['submit_delete'])) {
             <!-- Allowance info header and Delete button -->
             <div class="row-div" style="justify-content: space-between">
                 <h1 class="secondary-text">Expense info</h1>
-                <img class="delete-expense-btn" src="../public/images/icon-trash.png" style="cursor: pointer">
+                <div class="<?php isAdmin($role)?>">
+                    <img class="delete-expense-btn" src="../public/images/icon-trash.png" style="cursor: pointer">
+                </div>
                 <!-- Delete dialog div -->
                 <div class="delete-dialog hide">
                     <h6 class="tertiary-text">Delete this expense?</h6>
@@ -317,11 +318,13 @@ if (isset($_POST['submit_delete'])) {
                     <h6 class="info-date tertiary-text">Dec 18, 2023</h6>
                 </div>
             </div>
-            <form action="expense-addedit.php" method="GET">
-                <input class="edit-pass" type="hidden" name="expenseID">
-                <input type="hidden" name="remainingAllowance" value="<?php echo $remainingAllowance; ?>">
-                <button type="SUBMIT" name="edit-expense" class="edit-expense-btn">Edit expense</button>
-            </form>
+            <div class="<?php isAdmin($role)?>">
+                <form action="expense-addedit.php" method="GET">
+                    <input class="edit-pass" type="hidden" name="expenseID">
+                    <input type="hidden" name="remainingAllowance" value="<?php echo $remainingAllowance; ?>">
+                    <button type="SUBMIT" name="edit-expense" class="edit-expense-btn">Edit expense</button>
+                </form>
+            </div>
         </div>
     </div>
     <script type="text/javascript" language="javascript" src="../js/jquery-3.7.1.min.js"></script>

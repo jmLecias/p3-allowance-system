@@ -115,6 +115,15 @@ include '../entity-classes.php';
         padding: 20px;
         border-radius: 10px;
     }
+
+    .name-redirect {
+        background: none;
+        border: none;
+        color: inherit;
+        font-size: 18px;
+        text-align: left;
+        cursor: pointer;
+    }
 </style>
 
 <?php
@@ -129,7 +138,7 @@ if (isset($_POST['logout_press'])) {
 <body>
     <!-- Header / Logo Div -->
     <div class="header-div">
-        <div onclick="<?php goToFirstPage($role) ?>" class="row-div" style="cursor: pointer; padding: 20px">
+        <div onclick="" class="row-div" style="cursor: pointer; padding: 20px">
             <img src="../public/images/logo-1.png" style="position:absolute">
             <h1 class="logo-text" style="margin-left: 80px">Money minder</h1>
         </div>
@@ -184,9 +193,10 @@ if (isset($_POST['logout_press'])) {
                         <tr>
                             <td style="padding-right:50px">' . $newUser->userID . '</td>
                             <td style="padding-right:100px">
-                                <a href="user-allowances.php?id=' . $newUser->userID . '">'
-                        . $newUser->firstname . ' ' . $newUser->lastname . '
-                                </a>
+                                <form action="user-allowances.php" method="GET">
+                                    <input type="hidden" name="userID" value="' . $newUser->userID . '">
+                                    <input class="name-redirect" type="SUBMIT" name="admin-access" value="' . $newUser->firstname . ' ' . $newUser->lastname . '">
+                                </form>
                             </td>   
                             <td>' . $newUser->email . ' </td>
                             <td>
