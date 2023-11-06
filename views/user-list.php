@@ -105,14 +105,14 @@ include '../entity-classes.php';
 
     .role-form {
         background-color: #124361;
-        min-height: 600px;
+        min-height: 300px;
         min-width: 500px;
         position: absolute;
         top: 50%;
         left: 50%;
         margin-top: -300px;
         margin-left: -250px;
-        padding: 20px;
+        padding: 40px;
         border-radius: 10px;
     }
 
@@ -124,6 +124,10 @@ include '../entity-classes.php';
         text-align: left;
         cursor: pointer;
     }
+
+    .inside-click {
+        color: #B5E3FF;
+    }
 </style>
 
 <?php
@@ -132,6 +136,20 @@ if (isset($_POST['logout_press'])) {
     session_unset();
     session_destroy();
     exit();
+}
+
+// Check if admin edited a user's role
+if (isset($_POST['submit-userForm'])) {
+    $userID = $_POST['userID'];
+    $role = $_POST['role'];
+
+    $sql = "UPDATE users SET `role` = '$role' WHERE `userID` = '$userID'";
+
+    if ($conn->query($sql) === TRUE) {
+        echo '<script>alert("User role edited successfully!");</script>';
+    } else {
+        echo '<script>alert("Error: ' . $sql . ' ' . $conn->error . '");</script>';
+    }
 }
 ?>
 
@@ -200,7 +218,14 @@ if (isset($_POST['logout_press'])) {
                             </td>   
                             <td>' . $newUser->email . ' </td>
                             <td>
-                                <div class="row-div setrole-click" style="justify-content: space-between">
+                                <div 
+                                    class="row-div setrole-click" 
+                                    style="justify-content: space-between;"
+                                    data-id="' . $newUser->userID . '"    
+                                    data-name="' . $newUser->firstname." ". $newUser->lastname . '"
+                                    data-email="' . $newUser->email .'"    
+                                    data-role="' . $newUser->role . '"  
+                                >
                                     <div>' . $newUser->role . '</div>
                                     <img stye="" src="../public/images/icon-edit.png">
                                 </div>
@@ -221,12 +246,21 @@ if (isset($_POST['logout_press'])) {
 </body>
 <div class="overlay outside-click">
     <div class="inside-click" style="display:flex">
-        <form class="role-form">
-            <label class="secondary-text" style="margin: 0px 15px; font-size: 15px" for="user-role">User</label>
-            <input type="radio" id="user-role" name="role" value="user">
-            <label class="secondary-text" style="margin: 0px 15px; font-size: 15px" for="admin-role">Admin</label>
-            <input type="radio" id="admin-role" name="role" value="admin">
-            <button type="submit">Assign Role</button>
+        <form action="user-list.php" class="role-form" method="POST">
+            <input class="user-info-id" type="hidden" name="userID" value="">
+            <h6 class="primary-text">Edit user role?</h6>
+            <br><br>
+            <h6 class="user-info-name secondary-text">Name here</h6>
+            <h6 class="user-info-email secondary-text">Email here</h6>
+            <br>
+            <select class="role-change" name="role" required>
+                <option value="member">Member</option>
+                <option value="admin">Admin</option>
+            </select>
+            <br>
+            <br>
+            <br>
+            <button type="SUBMIT" name="submit-userForm">Assign new role</button>
         </form>
     </div>
 </div>
